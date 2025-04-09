@@ -1,22 +1,26 @@
 // ================================================================================================= Third Party Library
-import { Column, DataType, Table , HasMany, Model, BelongsToMany} from "sequelize-typescript";
+import { BelongsToMany, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 
 // ================================================================================================= Custom Library
-import UserRoles from "./user-role.model";
-import User from "./user.model";
-@Table ({tableName: 'role', timestamps: false})
+
+import User from './user.model';
+import UserRoles from './user-role.model';
+
+@Table({ tableName: 'role', timestamps: false })
 class Role extends Model<Role> {
 
     // ============================================================================================= Primary Key
-    @Column({primaryKey: true, autoIncrement: true})                                                r_id: number;
-    
+    @Column({ primaryKey: true, autoIncrement: true }) declare                                      id: number;
+
     // ============================================================================================= Fields
     @Column({ allowNull: false, type: DataType.STRING(100) })                                       name: string;
     @Column({ allowNull: false, type: DataType.STRING(100) })                                       slug: string;
 
     // ===========================================================================================>> One to Many
-    @HasMany(() => UserRoles)                                                                       user: UserRoles[];
-
-
+    @HasMany(() => UserRoles)                                                                       roles: UserRoles[]
+    
+    // ===========================================================================================>> Many to Many
+    @BelongsToMany(() => User, () => UserRoles)                                                     users: User[];
 }
+
 export default Role;
