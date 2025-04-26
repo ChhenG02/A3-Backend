@@ -11,7 +11,7 @@ export class UserSeeder {
 
     public static seed = async () => {
         try {
-            
+
             await UserSeeder.seedRoles();
             await UserSeeder.seedUsers();
             await UserSeeder.seedUserRoles();
@@ -23,7 +23,7 @@ export class UserSeeder {
 
     private static async seedRoles() {
         try {
-            
+
             await Role.bulkCreate(data.roles as CreationAttributes<Role>[]);
             console.log('\x1b[32mRoles data inserted successfully.');
 
@@ -92,12 +92,12 @@ const data = {
             updated_at: new Date(),
         },
     ],
-user_roles: [
-    { user_id: 1, role_id: RoleEnum.ADMIN, added_id: 1, created_at: new Date(), is_default: true },
-    { user_id: 1, role_id: RoleEnum.CASHIER, added_id: 1, created_at: new Date(), is_default: false }, // <-- Added
-    { user_id: 2, role_id: RoleEnum.CASHIER, added_id: 1, created_at: new Date(), is_default: true },
-    { user_id: 3, role_id: RoleEnum.CASHIER, added_id: 1, created_at: new Date(), is_default: true },
-],
+    user_roles: [
+        { user_id: 1, role_id: RoleEnum.ADMIN, added_id: 1, created_at: new Date(), is_default: true },
+        { user_id: 1, role_id: RoleEnum.CASHIER, added_id: 1, created_at: new Date(), is_default: false }, // <-- Added
+        { user_id: 2, role_id: RoleEnum.CASHIER, added_id: 1, created_at: new Date(), is_default: true },
+        { user_id: 3, role_id: RoleEnum.CASHIER, added_id: 1, created_at: new Date(), is_default: true },
+    ],
 
 };
 

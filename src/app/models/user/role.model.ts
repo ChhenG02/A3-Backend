@@ -13,14 +13,14 @@ class Role extends Model<Role> {
     @Column({ primaryKey: true, autoIncrement: true }) declare                                      id: number;
 
     // ============================================================================================= Fields
-    @Column({ allowNull: false, type: DataType.STRING(100) })                                       name: string;
-    @Column({ allowNull: false, type: DataType.STRING(100) })                                       slug: string;
+    @Column({ allowNull: false, type: DataType.STRING(100) })                              declare  name: string;
+    @Column({ allowNull: false, type: DataType.STRING(100) })                              declare  slug: string;
 
     // ===========================================================================================>> One to Many
-    @HasMany(() => UserRoles)                                                                       roles: UserRoles[]
+    @HasMany(() => UserRoles)                                                              declare  roles: UserRoles[]
     
     // ===========================================================================================>> Many to Many
-    @BelongsToMany(() => User, () => UserRoles)                                                     users: User[];
+    @BelongsToMany(() => User, () => UserRoles)                                            declare   users: User[];
 }
 
 export default Role;

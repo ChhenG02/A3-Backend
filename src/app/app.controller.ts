@@ -1,13 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+// =========================================================================>> Core Library
+import { Controller, Get, Render } from '@nestjs/common';
 
-
+// ======================================= >> Code Starts Here << ========================== //
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+    @Get()
+    @Render('index')
+    root() {
+        return { title: 'A3 POS' };
+    }
 }

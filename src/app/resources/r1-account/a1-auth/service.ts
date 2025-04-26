@@ -20,6 +20,9 @@ import { LoginRequestOTPDto } from './dto';
 import Role from 'src/app/models/user/role.model';
 import UserRoles from 'src/app/models/user/user-role.model';
 
+// Removed duplicate import of bcrypt
+import * as jwt from 'jsonwebtoken';
+
 interface LoginPayload {
     username: string
     password: string
@@ -33,7 +36,6 @@ export class AuthService {
     constructor(private readonly emailService: EmailService) {
         this.tokenGenerator = new JwtTokenGenerator();
     }
-
     async login(body: LoginPayload, req: Request) {
         let user: User | null;
         try {
@@ -45,9 +47,8 @@ export class AuthService {
                     ],
                     is_active: ActiveEnum.ACTIVE
                 },
-                attributes: ['id', 'name', 'avatar', 'phone', 'email', 'password', 'created_at'
-                ],
-                include: [Role]
+                attributes: ['id', 'name', 'avatar', 'phone', 'email', 'password'], // Don't include password in response
+                include: [Role] // Including associated roles
             });
         } catch (error) {
             console.error(error);
@@ -57,38 +58,25 @@ export class AuthService {
                 throw new BadRequestException('Server database error', 'Database Error');
             }
         }
+
         if (!user) {
             throw new BadRequestException('Invalid credentials');
         }
-        if (!user.roles.length) {
-            throw new ForbiddenException('Cannot access. invalid role');
-        }
-        const isPasswordValid = await bcrypt.compare(body.password, user.password);
+        const pw = user.dataValues.password;
+        const isPasswordValid = await bcrypt.compare(body.password, pw);
         if (!isPasswordValid) {
             throw new BadRequestException('Invalid password', 'Password Error');
         }
-        const token = this.tokenGenerator.getToken(user);
-        user.last_login = new Date();
-        await user.save();
+        const token = jwt.sign({
+            user
+        }, '23423432', {
+            expiresIn: '1h' // Token expiration time
+        });
 
-        const deviceInfo = req['deviceInfo'];
-
-        // Store the login log in users_logs table
-        await UsersLogs.create({
-            user_id: user.id,
-            action: 'login',
-            details: 'User logged into the system',
-            ip_address: deviceInfo.ip,
-            browser: deviceInfo.browser,
-            os: deviceInfo.os,
-            platform: body.platform || 'Web',
-            timestamp: deviceInfo.timestamp,
-        } as any);
-        // ===>> Prepare Response
         return {
-            token: token,
-            message: 'ចូលប្រព័ន្ធបានដោយជោគជ័យ'
-        }
+            token,
+            message: 'Logged in successfully' // Success message
+        };
     }
 
     async switchDefaultRole(auth: User, role_id: number) {
@@ -118,7 +106,7 @@ export class AuthService {
                 if (!user) {
                     throw new InternalServerErrorException('Failed to retrieve updated user information.');
                 }
-                
+
                 const token = this.tokenGenerator.getToken(user);
                 return {
                     token: token,
@@ -254,11 +242,11 @@ export class AuthService {
 
             // If user not found or inactive, return an appropriate response
             if (!user) {
-                return { data: false, message: 'អ្នកប្រើប្រាស់មិនមាននៅក្នុងប្រព័ន្ធទេ' }; // Correctly return an object
+                return { data: false, message: 'The user is not found' }; // Correctly return an object
             }
 
             // Return success response if user exists and is active
-            return { data: true, message: 'អ្នកប្រើប្រាស់មាននៅក្នុងប្រព័ន្ធ' };
+            return { data: true, message: 'The user exists' };
 
         } catch (error) {
             // Handle any unexpected errors
@@ -316,7 +304,7 @@ export class AuthService {
             // ===>> Prepare Response
             return {
                 token: token,
-                message: 'ចូលប្រព័ន្ធបានដោយជោគជ័យ'
+                message: 'Logged in successfully'
             }
         } catch (error) {
             throw new UnauthorizedException(error);

@@ -13,18 +13,18 @@ class UserRoles extends Model<UserRoles> {
     @Column({ primaryKey: true, autoIncrement: true }) declare                                      id: number;
 
     // ============================================================================================= Foreign Key
-    @ForeignKey(() => User) @Column({ onDelete: 'CASCADE' })                                        user_id: number;
-    @ForeignKey(() => Role) @Column({ onDelete: 'CASCADE' })                                        role_id: number;
-    @ForeignKey(() => User) @Column({ onDelete: 'CASCADE' })                                        added_id: number;
+    @ForeignKey(() => User) @Column({ onDelete: 'CASCADE' })                           declare      user_id: number;
+    @ForeignKey(() => Role) @Column({ onDelete: 'CASCADE' })                           declare      role_id: number;
+    @ForeignKey(() => User) @Column({ onDelete: 'CASCADE' })                           declare      added_id: number;
 
     // ============================================================================================= Field
-    @Column({ allowNull: false, type: DataType.DATE })                                              created_at?: Date;
-    @Column({ allowNull: false, type: DataType.BOOLEAN, defaultValue: false })                      is_default: boolean;
+    @Column({ allowNull: false, type: DataType.DATE })                                 declare      created_at?: Date;
+    @Column({ allowNull: false, type: DataType.BOOLEAN, defaultValue: false })         declare      is_default: boolean;
     
     // ============================================================================================= Many to One
-    @BelongsTo(() => Role)                                                                          role: Role;
-    @BelongsTo(() => User, { foreignKey: 'user_id', as: 'user' })                                   user: User;
-    @BelongsTo(() => User, { foreignKey: 'added_id', as: 'creator' })                               creator: User;
+    @BelongsTo(() => Role)                                                              declare     role: Role;
+    @BelongsTo(() => User, { foreignKey: 'user_id', as: 'user' })                       declare     user: User;
+    @BelongsTo(() => User, { foreignKey: 'added_id', as: 'creator' })                   declare     creator: User;
 
 }
 

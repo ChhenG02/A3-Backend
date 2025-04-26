@@ -17,29 +17,35 @@ class User extends Model<User> {
     @Column({ primaryKey: true, autoIncrement: true }) declare                                      id: number;
 
     // ============================================================================================= Field
-    @Column({ allowNull: true, type: DataType.STRING(200), defaultValue: 'static/avatar.png' })     avatar: string;
-    @Column({ allowNull: false, type: DataType.STRING(50) })                                        name: string;
-    @Column({ allowNull: true, type: DataType.STRING(100) })                                        email: string;
-    @Column({ allowNull: false,type: DataType.STRING(100) })                                        phone: string;
-    @Column({ allowNull: false, type: DataType.STRING(100), set(value: string) 
-        {const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(value, salt);
-            this.setDataValue('password', hash);
+    @Column({ allowNull: true, type: DataType.STRING(200), defaultValue: 'static/avatar.png' }) declare    avatar: string;
+    @Column({ allowNull: false, type: DataType.STRING(50) })                                    declare    name: string;
+    @Column({ allowNull: true, type: DataType.STRING(100) })                                    declare    email: string;
+    @Column({ allowNull: false,type: DataType.STRING(100) })                                    declare    phone: string;
+    @Column({
+        allowNull: false,
+        type: DataType.STRING(100),
+        set(value: string) {
+            const salt = bcrypt.genSaltSync(10);
+            const hash = bcrypt.hashSync(value, salt);
+            this.setDataValue('password', hash); // Hash password before setting it
         },
-    })                                                                                              password: string;
-    @Column({ allowNull: false, type: DataType.INTEGER, defaultValue: ActiveEnum.ACTIVE })          is_active: ActiveEnum;
-    @Column({ allowNull: true, type: DataType.INTEGER })                                            creator_id: number;
-    @Column({ allowNull: true, type: DataType.INTEGER })                                            updater_id: number;
+    })
+    declare password: string;
+    
+    @Column({ allowNull: false, type: DataType.INTEGER, defaultValue: ActiveEnum.ACTIVE })       declare    is_active: ActiveEnum;
+    @Column({ allowNull: true, type: DataType.INTEGER })                                         declare   creator_id: number;
+    @Column({ allowNull: true, type: DataType.INTEGER })                                         declare   updater_id: number;
 
     // ===========================================================================================>> Many to One
-    @BelongsTo(() => User, { foreignKey: 'creator_id', as: 'creator' })                             creator: User;
-    @BelongsTo(() => User, { foreignKey: 'updater_id', as: 'updater' })                             updater: User;
-    @Column({ allowNull: true, type: DataType.DATE, defaultValue: new Date() })                     last_login?: Date;
-    created_at: Date
+    @BelongsTo(() => User, { foreignKey: 'creator_id', as: 'creator' })                          declare   creator: User;
+    @BelongsTo(() => User, { foreignKey: 'updater_id', as: 'updater' })                          declare   updater: User;
+    @Column({ allowNull: true, type: DataType.DATE, defaultValue: new Date() })                  declare   last_login?: Date;
+    declare created_at: Date
     // ===========================================================================================>> One to Many
-    @HasMany(() => UserRoles)                                                                       role: UserRoles[];
-    @HasMany(() => UserOTP)                                                                         otps: UserOTP[];
+    @HasMany(() => UserRoles)                                                                    declare   role: UserRoles[];
+    @HasMany(() => UserOTP)                                                                      declare   otps: UserOTP[];
     // ===========================================================================================>> Many to Many
-    @BelongsToMany(() => Role, () => UserRoles)                                                     roles: Role[];
+    @BelongsToMany(() => Role, () => UserRoles)                                                  declare   roles: Role[];
+    
 }
 export default User;
