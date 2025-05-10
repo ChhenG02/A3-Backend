@@ -3,7 +3,7 @@
 import { RoleEnum } from "src/app/enums/role.enum";
 import { CreationAttributes } from 'sequelize';
 import Role from "src/app/models/user/role.model";
-import UserRoles from "src/app/models/user/user-role.model";
+import UserRoles from "@app/models/user/user_roles.model";
 
 import User from "src/app/models/user/user.model";
 
