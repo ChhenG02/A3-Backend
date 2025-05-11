@@ -24,7 +24,7 @@ import UsersLogs from 'src/app/models/user/user_logs.model';
 import { ActiveEnum } from 'src/app/enums/active.enum';
 import { LoginRequestOTPDto, UserDto } from './dto';
 import Role from 'src/app/models/user/role.model';
-import UserRoles from 'src/app/models/user/user-role.model';
+import UserRoles from '@app/models/user/user_roles.model';
 
 // Removed duplicate import of bcrypt
 import * as jwt from 'jsonwebtoken';
@@ -109,7 +109,7 @@ export class AuthService {
     const token = jwt.sign(
       { user: userDto },
       process.env.JWT_SECRET as string,
-      { expiresIn: '3650d' }, // 10 years
+      { expiresIn: '3d' }, // 3 days
     );
 
     return {
