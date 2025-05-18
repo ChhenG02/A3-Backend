@@ -24,9 +24,9 @@ export class CreateUserDto {
     password: string
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @IsBase64Image({ message: 'Invalid image format. Image must be base64 encoded JPEG or PNG.' })
-    avatar: string
+    avatar?: string
 }
 
 export class UpdateUserDto {
