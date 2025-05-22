@@ -1,6 +1,14 @@
 // ===========================================================================>> Core Library
 import { Module } from '@nestjs/common';
+import { ProductTypeModule } from './s1-type/module';
 
 // ===========================================================================>> Costom Library
 
-export class SetupModule { }
+@Module({
+    imports: [
+        ProductTypeModule
+    ]
+})
+export class SetupModule { 
+
+}
