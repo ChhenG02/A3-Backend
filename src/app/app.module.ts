@@ -21,6 +21,7 @@ import { SMSModule } from './resources/r4-testing/third-party/sms/module';
 import { TelegramModule } from './resources/r4-testing/third-party/telegram/module';
 import { appRoutes } from './app.route';
 import { UtilsModule } from './utils/module';
+import { UploadModule } from './shared/upload/module';
 
 
 // ======================== >> Code Starts Here << ========================== //
@@ -46,6 +47,7 @@ import { UtilsModule } from './utils/module';
 
         //===================== Testing
         BasicModule,
+        UploadModule,
         TelegramModule,
         SMSModule,
         ReportJSModule,

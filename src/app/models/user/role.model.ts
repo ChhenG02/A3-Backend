@@ -10,17 +10,17 @@ import UserRoles from './user_roles.model';
 class Role extends Model<Role> {
 
     // ============================================================================================= Primary Key
-    @Column({ primaryKey: true, autoIncrement: true }) declare                                      id: number;
+    @Column({ primaryKey: true, autoIncrement: true })                                       id: number;
 
     // ============================================================================================= Fields
-    @Column({ allowNull: false, type: DataType.STRING(100) })                              declare  name: string;
-    @Column({ allowNull: false, type: DataType.STRING(100) })                              declare  slug: string;
+    @Column({ allowNull: false, type: DataType.STRING(100) })                                name: string;
+    @Column({ allowNull: false, type: DataType.STRING(100) })                                slug: string;
 
     // ===========================================================================================>> One to Many
-    @HasMany(() => UserRoles)                                                              declare  roles: UserRoles[]
+    @HasMany(() => UserRoles)                                                                roles: UserRoles[]
     
     // ===========================================================================================>> Many to Many
-    @BelongsToMany(() => User, () => UserRoles)                                            declare   users: User[];
+    @BelongsToMany(() => User, () => UserRoles)                                               users: User[];
 }
 
 export default Role;
