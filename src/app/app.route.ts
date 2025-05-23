@@ -4,11 +4,12 @@ import { Routes } from '@nestjs/core';
 // ===========================================================================>> Custom Library
 
 
-import { accountRoutes } from './resources/r1-account/route';
-import { cashierRoutes } from './resources/r2-cashier/route';
-import { adminRoutes } from './resources/r3-admin/route';
+import { accountRoutes } from './resources/r1-account/account.route';
+import { cashierRoutes } from './resources/r2-cashier/cashier.route';
+
 import { utilsRoutes } from './utils/route';
-import { testingRoutes } from './resources/r4-testing/route';
+import { testingRoutes } from './resources/r4-testing/testing.route';
+import { adminRoutes } from './resources/r3-admin/admin.route';
 
 export const appRoutes: Routes = [{
     path: 'api',
