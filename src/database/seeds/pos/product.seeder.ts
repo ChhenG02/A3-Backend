@@ -1,189 +1,182 @@
-import Product from "@app/models/product/product.model";
-import ProductType from "@app/models/setup/type.model";
-
+import Product from '@app/models/product/product.model';
+import ProductType from '@app/models/setup/type.model';
 
 export class ProductSeeder {
-    public static async seed() {
-        try {
-            await ProductSeeder.seedProductTypes();
-            await ProductSeeder.seedProducts();
-        } catch (error) {
-            console.error('\x1b[31m\nError seeding products:', error);
-        }
+  public static async seed() {
+    try {
+      await ProductSeeder.seedProductTypes();
+      await ProductSeeder.seedProducts();
+    } catch (error) {
+      console.error('\x1b[31m\nError seeding products:', error);
     }
+  }
 
-    private static async seedProductTypes() {
-        try {
-            await ProductType.bulkCreate(productSeederData.types);
-            console.log('\x1b[32mProduct types inserted successfully.');
-        } catch (error) {
-            console.error('Error seeding product types:', error);
-            throw error;
-        }
+  private static async seedProductTypes() {
+    try {
+      await ProductType.bulkCreate(productSeederData.types);
+      console.log('\x1b[32mProduct types inserted successfully.');
+    } catch (error) {
+      console.error('Error seeding product types:', error);
+      throw error;
     }
+  }
 
-    private static async seedProducts() {
-        try {
-            await Product.bulkCreate(productSeederData.products);
-            console.log('\x1b[32mProducts inserted successfully.');
-        } catch (error) {
-            console.error('Error seeding products:', error);
-            throw error;
-        }
+  private static async seedProducts() {
+    try {
+      await Product.bulkCreate(productSeederData.products);
+      console.log('\x1b[32mProducts inserted successfully.');
+    } catch (error) {
+      console.error('Error seeding products:', error);
+      throw error;
     }
+  }
 }
 
 // Mock data for products and product types
 const productSeederData = {
-    types: [
-        { name: 'nintnedo', image: 'static/pos/products/type/glass-tulip.png' },
-        { name: 'handheld-game', image: 'static/pos/products/type/liquor.png' },
-        { name: 'Food-Meat', image: 'static/pos/products/type/food.png' },
-    ],
-    products: [
-        {
-            code: 'B001',
-            type_id: 1,
-            name: 'Logan Paul',
-            unit_price: 3000,
-            image: 'static/pos/products/beverage/prime.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B002',
-            type_id: 1,
-            name: 'Sting',
-            unit_price: 5000,
-            image: 'static/pos/products/beverage/sting.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B003',
-            type_id: 1,
-            name: 'Black Energy',
-            unit_price: 2000,
-            image: 'static/pos/products/beverage/exspress.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B004',
-            type_id: 1,
-            name: 'Ize',
-            unit_price: 4000,
-            image: 'static/pos/products/beverage/ize.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B005',
-            type_id: 1,
-            name: 'IZE Cola',
-            unit_price: 5000,
-            image: 'static/pos/products/beverage/IzeCola.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B006',
-            type_id: 1,
-            name: 'Red Bull',
-            unit_price: 10000,
-            image: 'static/pos/products/beverage/redbullb.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B007',
-            type_id: 1,
-            name: 'Red Bull Blue',
-            unit_price: 1500,
-            image: 'static/pos/products/beverage/redbullblue.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B008',
-            type_id: 1,
-            name: 'Red Bull',
-            unit_price: 12000,
-            image: 'static/pos/products/beverage/red.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B009',
-            type_id: 1,
-            name: 'Fanta',
-            unit_price: 2000,
-            image: 'static/pos/products/beverage/Fanta-Orange-Soft-Drink.jpg',
-            creator_id: 1,
-        },
-        {
-            code: 'B0010',
-            type_id: 1,
-            name: 'Sprite',
-            unit_price: 3000,
-            image: 'static/pos/products/beverage/sprite.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B0011',
-            type_id: 1,
-            name: 'PepSi',
-            unit_price: 2500,
-            image: 'static/pos/products/beverage/pesi.png',
-            creator_id: 1,
-        },
-        {
-            code: 'B0012',
-            type_id: 1,
-            name: 'CocaCola',
-            unit_price: 2000,
-            image: 'static/pos/products/beverage/coca.png',
-            creator_id: 1,
-        },
-        {
-            code: 'A001',
-            type_id: 2,
-            name: 'ABC Red',
-            unit_price: 5000,
-            image: 'static/pos/products/Alcohol/abcred.png',
-            creator_id: 1,
-        },
-        {
-            code: 'A002',
-            type_id: 2,
-            name: 'ABA Black',
-            unit_price: 5000,
-            image: 'static/pos/products/Alcohol/abc.png',
-            creator_id: 1,
-        },
-        {
-            code: 'A003',
-            type_id: 2,
-            name: 'Hanuman',
-            unit_price: 4000,
-            image: 'static/pos/products/Alcohol/hured.png',
-            creator_id: 1,
-        },
-        {
-            code: 'A004',
-            type_id: 2,
-            name: 'Hanuman Black',
-            unit_price: 8000,
-            image: 'static/pos/products/Alcohol/hunumanred.png',
-            creator_id: 1,
-        },
-        {
-            code: 'A005',
-            type_id: 2,
-            name: 'Hanuman',
-            unit_price: 4000,
-            image: 'static/pos/products/Alcohol/haa.png',
-            creator_id: 1,
-        },
-        {
-            code: 'F&M0010',
-            type_id: 3,
-            name: 'Pork',
-            unit_price: 8000,
-            image: 'static/pos/products/Alcohol/meat.png',
-            creator_id: 1,
-        },
-    ]
+  types: [
+    { name: 'nintendo', image: 'static/pos/products/type/nintendo.png' },
+    {
+      name: 'handheld-game',
+      image: 'static/pos/products/type/handheld-game.png',
+    },
+    {
+      name: 'play-station',
+      image: 'static/pos/products/type/play-station.png',
+    },
+    {
+      name: 'xbox',
+      image: 'static/pos/products/type/xbox.png',
+    },
+  ],
+  products: [
+    {
+      code: 'N001',
+      type_id: 1,
+      name: 'Mario Kart',
+      unit_price: 5,
+      image: 'static/pos/products/nintendo/mario-kart.png',
+      creator_id: 1,
+    },
+    {
+      code: 'N002',
+      type_id: 1,
+      name: 'Pokemon',
+      unit_price: 5,
+      image: 'static/pos/products/nintendo/pokemon.png',
+      creator_id: 1,
+    },
+    {
+      code: 'N003',
+      type_id: 1,
+      name: 'Supser Smash Bros',
+      unit_price: 5,
+      image: 'static/pos/products/nintendo/super-smash-bros.png',
+      creator_id: 1,
+    },
+    {
+      code: 'N004',
+      type_id: 1,
+      name: 'The Legend of Zelda: Breath of the Wild',
+      unit_price: 5,
+      image: 'static/pos/products/nintendo/zelda.png',
+      creator_id: 1,
+    },
+    {
+      code: 'H001',
+      type_id: 1,
+      name: '8Bitdo Wireless Controller',
+      unit_price: 3,
+      image: 'static/pos/products/handheld-game/8bitdo-wireless-controller.png',
+      creator_id: 1,
+    },
+    {
+      code: 'H002',
+      type_id: 1,
+      name: 'Lenovo Legion',
+      unit_price: 2,
+      image: 'static/pos/products/handheld-game/lenovo-legion.png',
+      creator_id: 1,
+    },
+    {
+      code: 'H003',
+      type_id: 1,
+      name: 'Nacon Revolution',
+      unit_price: 3,
+      image: 'static/pos/products/handheld-game/nacon-revolution.png',
+      creator_id: 1,
+    },
+    {
+      code: 'H004',
+      type_id: 1,
+      name: 'Steam Deck OLED',
+      unit_price: 4,
+      image: 'static/pos/products/handheld-game/steam-deck-oled.png',
+      creator_id: 1,
+    },
+    {
+      code: 'P001',
+      type_id: 1,
+      name: 'Elden Ring',
+      unit_price: 3,
+      image: 'static/pos/products/play-station/elden-ring.jpg',
+      creator_id: 1,
+    },
+    {
+      code: 'P002',
+      type_id: 1,
+      name: 'God of War: Ragnarok',
+      unit_price: 6,
+      image: 'static/pos/products/play-station/god-of-war.png',
+      creator_id: 1,
+    },
+    {
+      code: 'P003',
+      type_id: 1,
+      name: 'Red Dead Redemption 2',
+      unit_price: 4,
+      image: 'static/pos/products/play-station/red-dead-redemption.png',
+      creator_id: 1,
+    },
+    {
+      code: 'P004',
+      type_id: 1,
+      name: 'Spider Man',
+      unit_price: 5,
+      image: 'static/pos/products/play-station/spider-man.png',
+      creator_id: 1,
+    },
+    {
+      code: 'X001',
+      type_id: 2,
+      name: 'Cyberpunk 2077',
+      unit_price: 5,
+      image: 'static/pos/products/xbox/cyberpunk.png',
+      creator_id: 1,
+    },
+    {
+      code: 'X002',
+      type_id: 2,
+      name: 'Grand Theft Auto V',
+      unit_price: 3,
+      image: 'static/pos/products/xbox/gta-5.png',
+      creator_id: 1,
+    },
+    {
+      code: 'X003',
+      type_id: 2,
+      name: 'Read Dead Redemption 2',
+      unit_price: 5,
+      image: 'static/pos/products/xbox/red-dead-redemption.png',
+      creator_id: 1,
+    },
+    {
+      code: 'X004',
+      type_id: 2,
+      name: 'The Witcher 3: Wild Hunt',
+      unit_price: 4,
+      image: 'static/pos/products/xbox/witcher.png',
+      creator_id: 1,
+    },
+  ],
 };

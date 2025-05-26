@@ -5,7 +5,7 @@ import * as bcrypt from 'bcryptjs';
 // ================================================================================================= Custom Library
 import { ActiveEnum } from 'src/app/enums/active.enum';
 
-
+import Product      from '../product/product.model';
 import Role         from './role.model';
 import UserOTP      from './user_otps.model';
 import UserRoles from './user_roles.model';
@@ -43,6 +43,7 @@ class User extends Model<User> {
      created_at: Date
     // ===========================================================================================>> One to Many
     @HasMany(() => UserRoles)                                                                       role: UserRoles[];
+    @HasMany(() => Product)                                                                         create_pos: Product[];
     @HasMany(() => UserOTP)                                                                         otps: UserOTP[];
     // ===========================================================================================>> Many to Many
     @BelongsToMany(() => Role, () => UserRoles)                                                     roles: Role[];
