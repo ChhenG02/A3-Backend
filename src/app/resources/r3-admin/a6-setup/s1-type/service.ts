@@ -44,36 +44,38 @@ export class ProductTypeService {
 
   // ==========================================>> create
   async create(
-    body: CreateProductTypeDto
-  ): Promise<{ data: ProductType; message: string }> {
-    const checkExistName = await ProductType.findOne({
-      where: { name: body.name },
-    });
-    if (checkExistName) {
-      throw new BadRequestException("ឈ្មោះនេះមានក្នុងប្រព័ន្ធ");
-    }
-    const result = await this.fileService.uploadBase64Image(
-      "product",
-      body.image
-    );
-    if (result.error) {
-      throw new BadRequestException(result.error);
-    }
-    // Replace base64 string by file URI from FileService
-    body.image = result.file.uri;
+  body: CreateProductTypeDto
+): Promise<{ data: ProductType; message: string }> {
+  // Check for duplicate name
+  const checkExistName = await ProductType.findOne({
+    where: { name: body.name },
+  });
 
-    const productType = await ProductType.create({
-      name: body.name,
-      image: "abc",
-    });
-
-    const dataFormat = {
-      data: productType,
-      message: "Product type has been created.",
-    } as { data: ProductType; message: string };
-
-    return dataFormat;
+  if (checkExistName) {
+    throw new BadRequestException("ឈ្មោះនេះមានក្នុងប្រព័ន្ធ");
   }
+
+  // Upload image
+  const result = await this.fileService.uploadBase64Image("product", body.image);
+  if (result.error) {
+    throw new BadRequestException(result.error);
+  }
+
+  // Replace base64 string with uploaded file URI
+  const imageUri = result.file.uri;
+
+  // Create product type with image URI
+  const productType = await ProductType.create({
+    name: body.name,
+    image: imageUri, //  use uploaded image URI here
+  });
+
+  return {
+    data: productType,
+    message: "Product type has been created.",
+  };
+}
+
 
   // ==========================================>> update
   async update(

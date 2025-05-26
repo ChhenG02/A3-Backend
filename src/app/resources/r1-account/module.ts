@@ -4,7 +4,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 // =========================================================================>> Custom Library
 
 import { AuthModule } from './a1-auth/module';
-import { ProfileModule } from './a2.profile/module';
+import { ProfileModule } from './a2-profile/module';
 import { DeviceTrackerMiddleware } from 'src/app/core/middlewares/device-tracker.middleware';
 
 
