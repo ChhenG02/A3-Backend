@@ -8,6 +8,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { UserSeeder } from "./seeds/user/user.seed";
 import { ProductSeeder } from "./seeds/pos/product.seeder";
 import sequelizeConfig from "src/config/sequelize.config";
+import { OrderSeeder } from "./seeds/pos/order.seeder";
 
 class SeederInitializer {
 
@@ -36,6 +37,7 @@ class SeederInitializer {
         await UserSeeder.seed();
         //===================== pos data
         await ProductSeeder.seed();
+        await OrderSeeder.seed();
     }
 
     private async handleSeedingError(error: Error) {

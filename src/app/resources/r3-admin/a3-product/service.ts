@@ -11,10 +11,11 @@ import User from '@app/models/user/user.model';
 import { FileService } from 'src/app/services/file.service';
 import Product from 'src/app/models/product/product.model';
 
+
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { List } from './interface';
 import { Fn, Col, Literal } from 'sequelize/types/utils';
-import ProductType from '@app/models/setup/type.model';
+import ProductType from 'src/app/models/setup/type.model';
 export type Orders = Fn | Col | Literal | OrderItem[];
 
 @Injectable()
@@ -49,27 +50,28 @@ export class ProductService {
     }
 
     async getData(
-        params?: {
-            page: number;
-            limit: number;
-            key?: string;
-            type?: number;
-            creator?: number;
-            startDate?: string;
-            endDate?: string;
-            sort_by?: string;
-            order?: string;
-        }
-    ) {
+    params?: {
+        page?: number;
+        limit?: number;
+        key?: string;
+        type?: number;
+        creator?: number;
+        startDate?: string;
+        endDate?: string;
+        sort_by?: string;
+        order?: string;
+    }
+    ): Promise<List | { status: string; message: string }> {
         try {
-            // Calculate offset for pagination
-            const offset = (params?.page - 1) * params?.limit;
-    
+            // Ensure safe pagination values
+            const page = Math.max(params?.page || 1, 1);
+            const limit = Math.max(params?.limit || 10, 1);
+
             const toCambodiaDate = (dateString: string, isEndOfDay = false): Date => {
                 const date = new Date(dateString);
                 const utcOffset = 7 * 60; // UTC+7 offset in minutes
                 const localDate = new Date(date.getTime() + utcOffset * 60 * 1000);
-    
+
                 if (isEndOfDay) {
                     localDate.setHours(23, 59, 59, 999); // End of day
                 } else {
@@ -77,48 +79,36 @@ export class ProductService {
                 }
                 return localDate;
             };
-    
-            // Calculate start and end dates for the filter
+
+            // Date filtering
             const start = params?.startDate ? toCambodiaDate(params.startDate) : null;
             const end = params?.endDate ? toCambodiaDate(params.endDate, true) : null;
-    
-            // Construct the `where` clause
+
+            // Where clause
             const where: any = {
-                ...(params?.key
-                    ? {
-                          [Op.or]: [
-                              { code: { [Op.iLike]: `%${params?.key}%` } },
-                              { name: { [Op.iLike]: `%${params?.key}%` } },
-                          ],
-                      }
-                    : {}),
-                ...(params.type ? { type_id: Number(params.type) } : {}),
-                ...(params.creator ? { creator_id: Number(params.creator) } : {}),
-                ...(start && end ? { created_at: { [Op.between]: [start, end] } } : {}),
+                ...(params?.key && {
+                    [Op.or]: [
+                        { code: { [Op.iLike]: `%${params.key}%` } },
+                        { name: { [Op.iLike]: `%${params.key}%` } },
+                    ],
+                }),
+                ...(params?.type && { type_id: Number(params.type) }),
+                ...(params?.creator && { creator_id: Number(params.creator) }),
+                ...(start && end && { created_at: { [Op.between]: [start, end] } }),
             };
 
-
-            if(params?.type){
-                where["type_id"] = params.type;
-            }
-
-            
-            if(params?.creator){
-                where["creator_id"] = params.creator;
-            }
-    
-            const sortFieldProcessed = params?.sort_by || 'id'; // Default sorting by 'id'
+            // Sorting
+            const sortFieldProcessed = params?.sort_by || 'id';
             const sortOrderProcessed = ['ASC', 'DESC'].includes((params?.order || 'DESC').toUpperCase())
-                ? params?.order.toUpperCase()
+                ? (params?.order || 'DESC').toUpperCase()
                 : 'DESC';
-    
-            const sort: Orders = [];
-            let additionalWhere: any = {};
-    
+
+            const sort: OrderItem[] = [];
+
             switch (sortFieldProcessed) {
-                // case 'type_id':
-                //     sort.push([col('type_id'), sortOrderProcessed]);
-                //     break;
+                case 'type_id':
+                    sort.push([col('type_id'), sortOrderProcessed]);
+                    break;
                 case 'name':
                     sort.push([col('name'), sortOrderProcessed]);
                     break;
@@ -132,73 +122,68 @@ export class ProductService {
                     sort.push([sortFieldProcessed, sortOrderProcessed]);
                     break;
             }
-    
-            // Retrieve products with associated product types and users
-            const { rows, count } = await Product.findAndCountAll({
-                attributes: [
-                    'id',
-                    'code',
-                    'name',
-                    'image',
-                    'unit_price',
-                    'created_at',
-                    [
-                        literal(`(
-                        SELECT SUM(qty) 
-                        FROM order_details AS od 
-                        WHERE od.product_id = "Product"."id"
-                        )`),
-                        'total_sale',
+
+                // Count total before pagination
+                const totalCount = await Product.count({ where });
+
+                const totalPages = Math.ceil(totalCount / limit);
+                const safePage = Math.min(page, totalPages === 0 ? 1 : totalPages);
+                const offset = (safePage - 1) * limit;
+
+                // Fetch rows
+                const { rows } = await Product.findAndCountAll({
+                    attributes: [
+                        'id',
+                        'code',
+                        'name',
+                        'image',
+                        'unit_price',
+                        'created_at',
+                        [
+                            literal(`(
+                                SELECT SUM(qty) 
+                                FROM order_details AS od 
+                                WHERE od.product_id = "Product"."id"
+                            )`),
+                            'total_sale',
+                        ],
                     ],
-                ],
-                include: [
-                    {
-                        model: ProductType,
-                        attributes: ['id', 'name'],
+                    include: [
+                        {
+                            model: ProductType,
+                            attributes: ['id', 'name'],
+                        },
+                        {
+                            model: User,
+                            attributes: ['id', 'name', 'avatar'],
+                        },
+                    ],
+                    where,
+                    distinct: true,
+                    offset,
+                    order: sort,
+                    limit,
+                });
+
+                return {
+                    status: 'success',
+                    data: rows,
+                    pagination: {
+                        page: safePage,
+                        limit,
+                        totalPage: totalPages,
+                        total: totalCount,
                     },
-                    {
-                        model: OrderDetails,
-                        as: 'pod',
-                        attributes: [],
-                    },
-                    {
-                        model: User,
-                        attributes: ['id', 'name', 'avatar'],
-                    },
-                ],
-                where: { ...where, ...additionalWhere },
-                distinct: true, //  unique rows are counted
-                offset: offset,
-                order: sort,
-                limit: params?.limit,
-            });
-    
-            // Calculate the total pages based on the total count
-            const totalPages = Math.ceil(count / params?.limit);
-            // console.log('totalPages', totalPages);
-            // console.log('count', count);
-    
-            // Format the response data
-            const dataFormat: List = {
-                status: 'success',
-                data: rows,
-                pagination: {
-                    page: params?.page,
-                    limit: params?.limit,
-                    totalPage: totalPages,
-                    total: count,
-                },
-            };
-    
-            return dataFormat;
-        } catch (error) {
-            console.error('Error in listing method:', error); // Log the error for debugging
-            return {
-                status: 'error',
-                message: 'products/getData',
-            };
+                };
+            } catch (error) {
+                console.error('Error in listing method:', error);
+                return {
+                    status: 'error',
+                    message: 'products/getData',
+                };
+            }
         }
-    }
+
     
 
     async view(product_id: number) {
@@ -212,7 +197,7 @@ export class ProductService {
                 {
                     model: OrderDetails,
                     where: where,
-                    attributes: ['id', 'unit_price', 'qty'],
+                    attributes: ['id', 'unit_price', 'qty', 'order_id', 'product_id'],
                     include: [
                         {
                             model: Product,
