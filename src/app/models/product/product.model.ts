@@ -13,6 +13,7 @@ import {
 import OrderDetails from '@app/models/order/detail.model';
 import User from '@app/models/user/user.model';
 import ProductType from '../setup/type.model';
+import Promotion from '../promotion/promotion.model';
 
 @Table({
   tableName: 'product',
@@ -28,6 +29,9 @@ class Product extends Model<Product> {
   @Column({ onDelete: 'RESTRICT' })
   type_id: number;
   @ForeignKey(() => User) @Column({ onDelete: 'CASCADE' }) creator_id: number;
+  @ForeignKey(() => Promotion) 
+  @Column({ onDelete: 'CASCADE', allowNull: true })
+  promotion_id?: number;
 
   // ============================================================================================= Field
   @Column({ allowNull: false, unique: true, type: DataType.STRING(100) })
@@ -42,6 +46,8 @@ class Product extends Model<Product> {
   // ===========================================================================================>> Many to One
   @BelongsTo(() => ProductType) type: ProductType;
   @BelongsTo(() => User) creator: User;
+  @BelongsTo(() => Promotion, { foreignKey: 'promotion_id', as: 'promotion' })
+  promotion: Promotion;
 
   // ===========================================================================================>> One to Many
   @HasMany(() => OrderDetails) pod: OrderDetails[];

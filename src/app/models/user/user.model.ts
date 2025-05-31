@@ -10,6 +10,7 @@ import Product      from '../product/product.model';
 import Role         from './role.model';
 import UserOTP      from './user_otps.model';
 import UserRoles from './user_roles.model';
+import Promotion from '../promotion/promotion.model';
 
 @Table({ tableName: 'user', createdAt: 'created_at', updatedAt: 'updated_at', deletedAt: 'deleted_at', paranoid: true })
 class User extends Model<User> {
@@ -47,6 +48,7 @@ class User extends Model<User> {
     @HasMany(() => Product)                                                                         create_pos: Product[];
     @HasMany(() => Order)                                                                           orders: Order[];
     @HasMany(() => UserOTP)                                                                         otps: UserOTP[];
+    @HasMany(() => Promotion)                                                                   promotions: Promotion[];
     // ===========================================================================================>> Many to Many
     @BelongsToMany(() => Role, () => UserRoles)                                                     roles: Role[];
     
