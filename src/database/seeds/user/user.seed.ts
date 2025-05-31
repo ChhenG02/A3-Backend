@@ -54,8 +54,8 @@ export class UserSeeder {
 // Mock-data
 const data = {
   roles: [
-    { name: 'អ្នកគ្រប់គ្រង', slug: 'admin' },
-    { name: 'អ្នកគិតប្រាក់', slug: 'cashier' },
+    { name: 'Admin', slug: 'admin' },
+    { name: 'Cashier', slug: 'cashier' },
   ],
   users: [
     {
