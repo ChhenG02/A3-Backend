@@ -88,6 +88,16 @@ const data = {
       created_at: new Date(),
       updated_at: new Date(),
     },
+     {
+      name: 'Chor Narin',
+      phone: '0889161371',
+      email: 'cc7@gmail.com',
+      password: '123456',
+      avatar: 'static/pos/user/avatar.png',
+      creator_id: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   ],
   user_roles: [
     {
@@ -114,6 +124,13 @@ const data = {
     {
       user_id: 3,
       role_id: RoleEnum.CASHIER,
+      added_id: 1,
+      created_at: new Date(),
+      is_default: true,
+    },
+     {
+      user_id: 4,
+      role_id: RoleEnum.ADMIN,
       added_id: 1,
       created_at: new Date(),
       is_default: true,

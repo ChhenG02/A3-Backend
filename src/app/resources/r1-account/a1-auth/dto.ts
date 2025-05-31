@@ -50,7 +50,7 @@ export class LoginRequestDto {
     platform: string;
 }
 export class LoginRequestOTPDto {
-
+    
     @IsString()
     @IsNotEmpty({ message: "Filed username is required" })
     username: string;
