@@ -21,6 +21,7 @@ export class PromotionController {
         @Query('page') page: number = 1,
         @Query('limit') limit: number = 10
     ): Promise<any> {
+        console.log('User ID:', user.id);
         const result = await this.promotionService.getPromotions(page, limit, user.id);
         return res.status(result.statusCode).json(result);
     }
@@ -31,7 +32,7 @@ export class PromotionController {
     async createPromotion(
         @UserDecorator() user: User,
         @Res() res: Response,
-        @Body('body') body : CreatePromotionDto
+        @Body() body : CreatePromotionDto
     ): Promise<any> {
         const result = await this.promotionService.createPromotion(user.id, body);
         return res.status(result.statusCode).json(result);
@@ -43,7 +44,7 @@ export class PromotionController {
     async updatePromotion(
         @UserDecorator() user: User,
         @Res() res: Response,
-        @Body('body') body: updatePromotionDto,
+        @Body() body: updatePromotionDto,
         @Param('id') id: number
     ): Promise<any> {
         const result = await this.promotionService.updatePromotion(user.id, id, body);

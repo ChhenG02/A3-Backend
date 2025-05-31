@@ -1,17 +1,17 @@
-import { IsNotEmpty, IsNumber, IsDate } from "class-validator";
+import { IsNotEmpty, IsNumber, IsDate, IsString, IsDateString } from "class-validator";
 
 export class CreatePromotionDto {
   @IsNumber()
   @IsNotEmpty()
   discount_value: number;
 
-  @IsDate()
   @IsNotEmpty()
-  start_date: Date;
+  @IsDateString()
+  start_date: string;
 
-  @IsDate()
   @IsNotEmpty()
-  end_date: Date;
+  @IsDateString()
+  end_date: string;
 }
 
 export class updatePromotionDto extends CreatePromotionDto{};

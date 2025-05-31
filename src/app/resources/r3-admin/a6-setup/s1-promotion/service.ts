@@ -4,6 +4,7 @@ import Promotion from "@app/models/promotion/promotion.model";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateProductDto } from "../../a3-product/dto";
 import { CreatePromotionDto, updatePromotionDto } from "./dto";
+import { start } from "repl";
 
 
 @Injectable()
@@ -51,9 +52,13 @@ export class PromotionService {
 
     async createPromotion(userId: number, body: CreatePromotionDto): Promise<ApiResponseDto<any>>{
         try{
+            const startDate = new Date(body.start_date);
+            const endDate = new Date(body.end_date);
             const promotion = await Promotion.create({
-                ...body,
                 creator_id: userId,
+                start_date: startDate,
+                end_date: endDate,
+                discount_value: body.discount_value,
             });
 
             return ApiResponseDto.success(
@@ -80,7 +85,9 @@ export class PromotionService {
             }
             // Update the promotion with the new data
             await promotion.update({
-                ...body,
+                start_date: new Date(body.start_date),
+                end_date: new Date(body.end_date),  
+                discount_value: body.discount_value,
                 updater_id: userId,
             });
 
