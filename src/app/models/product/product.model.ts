@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -14,6 +15,7 @@ import OrderDetails from '@app/models/order/detail.model';
 import User from '@app/models/user/user.model';
 import ProductType from '../setup/type.model';
 import Promotion from '../promotion/promotion.model';
+import Stock from '../stock/stock.model';
 
 @Table({
   tableName: 'product',
@@ -44,13 +46,14 @@ class Product extends Model<Product> {
   discount: number;
   created_at: Date;
   // ===========================================================================================>> Many to One
-  @BelongsTo(() => ProductType) type: ProductType;
-  @BelongsTo(() => User) creator: User;
+  @BelongsTo(() => ProductType, {foreignKey: 'type_id', as: 'product_type'}) product_type: ProductType;
+  @BelongsTo(() => User, {foreignKey: 'creator_id', as: 'creator'}) creator: User;
   @BelongsTo(() => Promotion, { foreignKey: 'promotion_id', as: 'promotion' })
   promotion: Promotion;
 
   // ===========================================================================================>> One to Many
   @HasMany(() => OrderDetails) pod: OrderDetails[];
+  @HasOne(() => Stock) stock : Stock;
 }
 
 export default Product;

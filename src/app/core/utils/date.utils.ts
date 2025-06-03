@@ -10,3 +10,17 @@ export function formatTimeToHHMM(date: Date): string {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
 }
+
+export function toCambodiaDate(dateString: string, isEndOfDay = false): Date {
+    const date = new Date(dateString);
+    const utcOffset =  7 * 60; // UTC+7 offset in minutes
+    const localDate =  new Date(date.getTime() + utcOffset * 60 * 1000);
+
+    if(isEndOfDay){
+        localDate.setHours(23, 59, 59, 999); // End the day
+    }else{
+        localDate.setHours(0,0,0,0) // Start the day
+    }
+    return localDate;
+
+}
