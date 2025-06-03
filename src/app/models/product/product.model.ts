@@ -13,7 +13,7 @@ import {
 import OrderDetails from '@app/models/order/detail.model';
 import User from '@app/models/user/user.model';
 import ProductType from '../setup/type.model';
-import Promotion from '../promotion/promotion.model';
+import Promotion from '../setup/promotion.model';
 
 @Table({
   tableName: 'product',
@@ -29,7 +29,7 @@ class Product extends Model<Product> {
   @Column({ onDelete: 'RESTRICT' })
   type_id: number;
   @ForeignKey(() => User) @Column({ onDelete: 'CASCADE' }) creator_id: number;
-  @ForeignKey(() => Promotion) 
+  @ForeignKey(() => Promotion)
   @Column({ onDelete: 'CASCADE', allowNull: true })
   promotion_id?: number;
 
