@@ -1,8 +1,8 @@
 // ===========================================================================>> Core Library
 import { Module } from '@nestjs/common';
 import { ProductTypeModule } from './s1-type/module';
-import { PromotionModule } from './s1-promotion/module';
 import { StockStatusModule } from './s3-stock_status/module';
+import { PromotionModule } from './s2-promotion/module';
 
 // ===========================================================================>> Costom Library
 
@@ -13,6 +13,4 @@ import { StockStatusModule } from './s3-stock_status/module';
         StockStatusModule
     ]
 })
-export class SetupModule { 
-
-}
+export class SetupModule {}

@@ -1,8 +1,8 @@
 // ===========================================================================>> Core Library
 import { Routes } from '@nestjs/core';
 import { ProductTypeModule } from './s1-type/module';
-import { PromotionModule } from './s1-promotion/module';
 import { StockStatusModule } from './s3-stock_status/module';
+import { PromotionModule } from './s2-promotion/module';
 
 // ===========================================================================>> Custom Library
 
