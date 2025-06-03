@@ -1,7 +1,7 @@
 // ===========================================================================>> Core Library
 import { Routes } from '@nestjs/core';
 import { ProductTypeModule } from './s1-type/module';
-import { PromotionModule } from './s1-promotion/module';
+import { PromotionModule } from './s2-promotion/module';
 
 // ===========================================================================>> Custom Library
 
@@ -12,6 +12,6 @@ export const SetupRoutes: Routes = [
   },
   {
     path: 'promotion',
-    module: PromotionModule
-  }
+    module: PromotionModule,
+  },
 ];
