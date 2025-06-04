@@ -84,7 +84,7 @@ const productSeederData = {
     },
     {
       code: 'H001',
-      type_id: 1,
+      type_id: 2,
       name: 'PS5 Controller',
       unit_price: 3,
       image: 'static/pos/products/handheld-game/ps5-controller.png',
@@ -92,7 +92,7 @@ const productSeederData = {
     },
     {
       code: 'H002',
-      type_id: 1,
+      type_id: 2,
       name: 'ROG Ally X',
       unit_price: 2,
       image: 'static/pos/products/handheld-game/rog-ally-x.png',
@@ -100,7 +100,7 @@ const productSeederData = {
     },
     {
       code: 'H003',
-      type_id: 1,
+      type_id: 2,
       name: 'Xbox Series X Controller',
       unit_price: 3,
       image: 'static/pos/products/handheld-game/xbox-series-x.png',
@@ -108,7 +108,7 @@ const productSeederData = {
     },
     {
       code: 'H004',
-      type_id: 1,
+      type_id: 2,
       name: 'Steam Deck OLED',
       unit_price: 4,
       image: 'static/pos/products/handheld-game/steam-deck-oled.png',
@@ -116,7 +116,7 @@ const productSeederData = {
     },
     {
       code: 'P001',
-      type_id: 1,
+      type_id: 3,
       name: 'Elden Ring',
       unit_price: 3,
       image: 'static/pos/products/play-station/elden-ring.png',
@@ -124,7 +124,7 @@ const productSeederData = {
     },
     {
       code: 'P002',
-      type_id: 1,
+      type_id: 3,
       name: 'God of War: Ragnarok',
       unit_price: 6,
       image: 'static/pos/products/play-station/god-of-war.png',
@@ -132,7 +132,7 @@ const productSeederData = {
     },
     {
       code: 'P003',
-      type_id: 1,
+      type_id: 3,
       name: 'Red Dead Redemption 2',
       unit_price: 4,
       image: 'static/pos/products/play-station/red-dead-redemption.png',
@@ -140,7 +140,7 @@ const productSeederData = {
     },
     {
       code: 'P004',
-      type_id: 1,
+      type_id: 3,
       name: 'Spider Man',
       unit_price: 5,
       image: 'static/pos/products/play-station/spider-man.png',
@@ -148,7 +148,7 @@ const productSeederData = {
     },
     {
       code: 'X001',
-      type_id: 2,
+      type_id: 4,
       name: 'Cyberpunk 2077',
       unit_price: 5,
       image: 'static/pos/products/xbox/cyberpunk.png',
@@ -156,7 +156,7 @@ const productSeederData = {
     },
     {
       code: 'X002',
-      type_id: 2,
+      type_id: 4,
       name: 'Grand Theft Auto V',
       unit_price: 3,
       image: 'static/pos/products/xbox/gta-5.png',
@@ -164,7 +164,7 @@ const productSeederData = {
     },
     {
       code: 'X003',
-      type_id: 2,
+      type_id: 4,
       name: 'Read Dead Redemption 2',
       unit_price: 5,
       image: 'static/pos/products/xbox/red-dead-redemption.png',
@@ -172,7 +172,7 @@ const productSeederData = {
     },
     {
       code: 'X004',
-      type_id: 2,
+      type_id: 4,
       name: 'The Witcher 3: Wild Hunt',
       unit_price: 4,
       image: 'static/pos/products/xbox/witcher.png',
