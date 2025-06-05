@@ -2,9 +2,7 @@ import { PaginationMeta } from '@app/core/dto/pagination.dto';
 import { ApiResponseDto } from '@app/core/dto/response.dto';
 import Promotion from '@app/models/setup/promotion.model';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateProductDto } from '../../a3-product/dto';
 import { CreatePromotionDto, updatePromotionDto } from './dto';
-import { start } from 'repl';
 
 @Injectable()
 export class PromotionService {

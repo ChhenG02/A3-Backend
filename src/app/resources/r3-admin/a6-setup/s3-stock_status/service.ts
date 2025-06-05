@@ -4,7 +4,6 @@ import StockStatus from "@app/models/stock/stock_status.model";
 import { BadRequestException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateStockStatusDto, UpdateStockStatusDto } from "./dto";
 import { FileService } from "@app/services/file.service";
-import Stock from "@app/models/stock/stock.model";
 
 
 @Injectable()
@@ -38,14 +37,14 @@ export class StockStatusService{
             };
 
             return ApiResponseDto.success(
-                {Promotion: rows},
-                'Promotions retrieved successfully',
+                {StockStatus: rows},
+                'Stock Status retrieved successfully',
                 200,
                 pagination
             )
         }catch (error) {
             return ApiResponseDto.error(
-                'Failed to retrieve promotions',
+                'Failed to retrieve stock-status',
                 500,
                 error.message || 'Internal Server Error',
                 { timestamp: new Date().toISOString() }
@@ -73,15 +72,15 @@ export class StockStatusService{
         }
 
         const stock_status = await StockStatus.create({
-            name: body.status_name,
-            color : body.status_color,
+            name: body.name,
+            color : body.color,
             avatar : body.avatar || null,
             min_items : body.min_items,
             max_items : body.max_items
         });
 
         return ApiResponseDto.success(
-            stock_status,
+            {stock_status},
             'stock status creates successfully',
             200,
             {timestamp: new Date().toISOString()}
@@ -118,8 +117,8 @@ export class StockStatusService{
             }
 
             await StockStatus.update({
-                name: body.status_name,
-                color : body.status_color,
+                name: body.name,
+                color : body.color,
                 avatar : body.avatar || null,
                 min_items : body.min_items,
                 max_items : body.max_items
