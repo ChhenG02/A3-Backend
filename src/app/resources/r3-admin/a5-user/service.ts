@@ -422,29 +422,100 @@ export class UserService {
       );
     }
 
-    // Handle role updates (add new roles that don't already exist)
+    // Handle role updates
     if (body.role_ids && body.role_ids.length > 0) {
-      const existingRoles = await UserRoles.findAll({
-        where: { user_id: userId },
-        attributes: ['role_id'],
-      });
+      const transaction = await User.sequelize.transaction();
+      try {
+        // Get current roles
+        const currentRoles = await UserRoles.findAll({
+          where: { user_id: userId },
+          transaction,
+        });
 
-      const existingRoleIds = existingRoles.map((role) => role.role_id);
-
-      const newRoles = body.role_ids.filter(
-        (roleId) => !existingRoleIds.includes(roleId),
-      );
-
-      // Add new roles only if they are not already assigned
-      if (newRoles.length > 0) {
-        const newRoleAssignments = newRoles.map((roleId) => ({
-          user_id: userId,
-          role_id: roleId,
-          added_id: updaterId,
-          created_at: new Date(),
-          is_default: false,
-        }));
-        await UserRoles.bulkCreate(newRoleAssignments);
+        const currentRoleIds = currentRoles.map(role => role.role_id);
+        
+        // Determine roles to add and remove
+        const rolesToAdd = body.role_ids.filter(id => !currentRoleIds.includes(id));
+        const rolesToRemove = currentRoleIds.filter(id => !body.role_ids.includes(id));
+        
+        // Check if we're removing the default role
+        const removedDefaultRole = currentRoles.find(
+          role => rolesToRemove.includes(role.role_id) && role.is_default
+        );
+        
+        // Remove roles that are no longer needed
+        if (rolesToRemove.length > 0) {
+          await UserRoles.destroy({
+            where: {
+              user_id: userId,
+              role_id: { [Op.in]: rolesToRemove },
+            },
+            transaction,
+          });
+        }
+        
+        // Add new roles
+        if (rolesToAdd.length > 0) {
+          const newRoles = rolesToAdd.map((roleId, index) => ({
+            user_id: userId,
+            role_id: roleId,
+            added_id: updaterId,
+            created_at: new Date(),
+            is_default: false, // Will handle defaults below
+          }));
+          
+          await UserRoles.bulkCreate(newRoles, { transaction });
+        }
+        
+        // Handle default role logic
+        let needsNewDefault = false;
+        
+        // Case 1: If we removed the default role, we need a new one
+        if (removedDefaultRole) {
+          needsNewDefault = true;
+        }
+        
+        // Case 2: If this is the first role being added, it should be default
+        if (currentRoles.length === 0 && body.role_ids.length > 0) {
+          needsNewDefault = true;
+        }
+        
+        // Case 3: If user has only one role, it must be default
+        if (body.role_ids.length === 1) {
+          needsNewDefault = true;
+        }
+        
+        // Set new default role if needed
+        if (needsNewDefault) {
+          // First, clear all defaults
+          await UserRoles.update(
+            { is_default: false },
+            {
+              where: { user_id: userId },
+              transaction,
+            }
+          );
+          
+          // Then set the first role as default
+          await UserRoles.update(
+            { is_default: true },
+            {
+              where: {
+                user_id: userId,
+                role_id: body.role_ids[0], // First role in array becomes default
+              },
+              transaction,
+            }
+          );
+        }
+        
+        await transaction.commit();
+      } catch (error) {
+        await transaction.rollback();
+        throw new BadRequestException(
+          'Failed to update user roles. Please try again later.',
+          'Role Update Error',
+        );
       }
     }
 
@@ -461,6 +532,18 @@ export class UserService {
           'is_active',
           'created_at',
         ],
+        include: [
+          {
+            model: UserRoles,
+            attributes: ['id', 'role_id', 'is_default'],
+            include: [
+              {
+                model: Role,
+                attributes: ['id', 'name'],
+              },
+            ],
+          },
+        ],
       });
     } catch (error) {
       throw new BadRequestException(
@@ -468,6 +551,7 @@ export class UserService {
         'Error Query',
       );
     }
+    
     // Format the response
     const dataFormat: Update = {
       data: updateUser,
