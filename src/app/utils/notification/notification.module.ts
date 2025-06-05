@@ -1,11 +1,10 @@
 // ===========================================================================>> Core Library
 import { Module } from '@nestjs/common';
 
-// ===========================================================================>> Custom Library
+// ===========================================================================>> Costom Library
+
 
 @Module({
-    imports: [
-    ]
+    imports: []
 })
-
-export class UtilsModule {}
+export class NotificationModule { }
