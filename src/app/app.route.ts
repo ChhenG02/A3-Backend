@@ -7,7 +7,7 @@ import { Routes } from '@nestjs/core';
 import { accountRoutes } from './resources/r1-account/account.route';
 import { cashierRoutes } from './resources/r2-cashier/cashier.route';
 
-import { utilsRoutes } from './utils/route';
+import { utilsRoutes } from './utils/utils.route';
 import { testingRoutes } from './resources/r4-testing/testing.route';
 import { adminRoutes } from './resources/r3-admin/admin.route';
 

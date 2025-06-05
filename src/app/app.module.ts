@@ -20,7 +20,7 @@ import { ReportJSModule } from './resources/r4-testing/third-party/report/module
 import { SMSModule } from './resources/r4-testing/third-party/sms/module';
 import { TelegramModule } from './resources/r4-testing/third-party/telegram/module';
 import { appRoutes } from './app.route';
-import { UtilsModule } from './utils/module';
+import { UtilsModule } from './utils/utils.module';
 import { UploadModule } from './shared/upload/module';
 
 
