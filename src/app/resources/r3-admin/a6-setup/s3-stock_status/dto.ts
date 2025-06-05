@@ -5,11 +5,11 @@ export class CreateStockStatusDto{
 
     @IsString()
     @IsNotEmpty()
-    status_name : string;
+    name : string;
 
     @IsString()
     @IsNotEmpty()
-    status_color : string;
+    color : string;
 
     @IsNumber()
     @IsNotEmpty()
@@ -30,11 +30,11 @@ export class UpdateStockStatusDto{
 
     @IsString()
     @IsNotEmpty()
-    status_name : string;
+    name : string;
 
     @IsString()
     @IsNotEmpty()
-    status_color : string;
+    color : string;
 
     @IsNumber()
     @IsNotEmpty()
