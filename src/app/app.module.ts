@@ -22,6 +22,7 @@ import { TelegramModule } from './resources/r4-testing/third-party/telegram/modu
 import { appRoutes } from './app.route';
 import { UtilsModule } from './utils/utils.module';
 import { UploadModule } from './shared/upload/module';
+import { KhqrModule } from './utils/khqr/khqr.module';
 
 
 // ======================== >> Code Starts Here << ========================== //
@@ -51,6 +52,8 @@ import { UploadModule } from './shared/upload/module';
         TelegramModule,
         SMSModule,
         ReportJSModule,
+        KhqrModule,
+
 
         //===================== END OF ROLE USER
         RouterModule.register(appRoutes)
