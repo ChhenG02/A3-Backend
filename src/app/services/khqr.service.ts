@@ -1,40 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { BakongKHQR, khqrData, IndividualInfo } from 'bakong-khqr';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { spawn } from 'child_process';
+import { join } from 'path';
 
 @Injectable()
 export class KhqrService {
-  generate(amount: number, billNumber: string, mobileNumber?: string) {
-    const optionalData = {
-      currency: khqrData.currency.usd,
-      amount,
-      billNumber,
-      mobileNumber: mobileNumber || process.env.KHQR_MOBILE_NUMBER,
-      storeLabel: process.env.KHQR_STORE_LABEL,
-      terminalLabel: process.env.KHQR_TERMINAL_LABEL,
-      expirationTimestamp: Date.now() + 2 * 60 * 1000, // 2 minutes
-      merchantCategoryCode: '5999',
-      isDynamic: true, 
-    };
+  async generateQr(payload: any): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const scriptPath = join(
+        process.cwd(), // will resolve to: api/
+        'src',
+        'app',
+        'utils',
+        'khqr',
+        'generate_qr.py'
+      );
 
-    const individualInfo = new IndividualInfo(
-      process.env.KHQR_ID,
-      khqrData.currency.usd,
-      process.env.KHQR_NAME,
-      process.env.KHQR_CITY,
-      optionalData,
-    );
+      const python = spawn('python3', [scriptPath, JSON.stringify(payload)]);
 
-    const khqr = new BakongKHQR();
-    const qrString = khqr.generateIndividual(individualInfo);
+      let result = '';
+      let error = '';
 
-    return qrString;
-  }
+      python.stdout.on('data', (data) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        result += data.toString();
+      });
 
-  verify(khqrString: string) {
-    const { isValid } = BakongKHQR.verify(khqrString);
-    return isValid;
+      python.stderr.on('data', (data) => {
+        error += data.toString();
+        console.error('Python stderr:', error);
+      });
+
+      python.on('close', (code) => {
+        if (code === 0) {
+          resolve(result.trim());
+        } else {
+          reject(`QR generation failed: ${error}`);
+        }
+      });
+    });
   }
 }
