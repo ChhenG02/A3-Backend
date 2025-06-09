@@ -4,7 +4,7 @@ import { KhqrService } from '@app/services/khqr.service';
 import { Controller, Post, Body } from '@nestjs/common';
 
 
-@Controller('khqr')
+@Controller('api/khqr')
 export class KhqrController {
   constructor(private readonly qrService: KhqrService) {}
 
