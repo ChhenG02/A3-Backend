@@ -21,6 +21,7 @@ export class KhqrService {
       let error = '';
 
       python.stdout.on('data', (data) => {
+
         result += data.toString();
       });
 
