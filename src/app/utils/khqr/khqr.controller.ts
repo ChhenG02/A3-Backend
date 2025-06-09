@@ -1,25 +1,16 @@
+// src/qr/qr.controller.ts
+
 import { KhqrService } from '@app/services/khqr.service';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 
 
 @Controller('khqr')
 export class KhqrController {
-  constructor(private readonly khqrService: KhqrService) {}
+  constructor(private readonly qrService: KhqrService) {}
 
-  @Post('generate')
-  generate(@Body() body: { amount: number; billNumber: string; mobileNumber?: string }) {
-    const { amount, billNumber, mobileNumber } = body;
-    const qrString = this.khqrService.generate(amount, billNumber, mobileNumber);
-
-    return {
-      qrString,
-      expiresAt: new Date(Date.now() + 2 * 60 * 1000),
-    };
-  }
-
-  @Post('verify')
-  verify(@Body() body: { qrString: string }) {
-    const isValid = this.khqrService.verify(body.qrString);
-    return { isValid };
+  @Post()
+  async generateQr(@Body() body: any) {
+    const qrString = await this.qrService.generateQr(body);
+    return { qr: qrString };
   }
 }
