@@ -21,18 +21,21 @@ class Promotion extends Model<Promotion> {
     declare end_date: Date;
 
     @ForeignKey(() => User)
-    @Column({ onDelete: 'CASCADE', allowNull: false }) 
+    @Column({ onDelete: 'CASCADE', allowNull: false, type: DataType.INTEGER }) 
     declare creator_id: number;
     @ForeignKey(() => User)
-    @Column({ onDelete: 'CASCADE', allowNull: true })
+    @Column({ onDelete: 'CASCADE', allowNull: true ,type: DataType.INTEGER })
     declare updater_id?: number;
+    @ForeignKey(() => Product, )
+    @Column({allowNull : true, onDelete :  'CASCADE', type: DataType.INTEGER})
+    declare product_id ?: Product
 
     @BelongsTo(() => User, { foreignKey: 'creator_id', as: 'creator'})
     creator: User;
     @BelongsTo(() => User, { foreignKey: 'updater_id', as: 'updater'})
     updater: User;
-
-    @HasMany(() => Product) products: Product[];
+    @BelongsTo(() => Product, {foreignKey: 'product_id', as: 'product'})
+    product : Product
 
 }
 export default Promotion;

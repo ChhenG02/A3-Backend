@@ -15,7 +15,7 @@ class OrderDetails extends Model<OrderDetails> {
 
     // ============================================================================================= Foreign Key
     @ForeignKey(() => Order) @Column({ onDelete: 'CASCADE' })                                       order_id: number;
-    @ForeignKey(() => Product) @Column({ onDelete: 'CASCADE' })                                     product_id: number;
+    @ForeignKey(() => Product) @Column({ onDelete: 'CASCADE', type: DataType.INTEGER })                                     product_id: number;
 
     @Column({ allowNull: true, type: DataType.DOUBLE })                                             unit_price?: number;
     @Column({ allowNull: false, type: DataType.INTEGER, defaultValue: 0 })                          qty: number;
