@@ -21,7 +21,7 @@ export class KhqrService {
       let error = '';
 
       python.stdout.on('data', (data) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
         result += data.toString();
       });
 
