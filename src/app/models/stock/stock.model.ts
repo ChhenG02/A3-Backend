@@ -23,11 +23,11 @@ class Stock extends Model<Stock>{
     declare product_id : number;
     @ForeignKey(() => StockStatus)
     @Column({allowNull : true, type: DataType.INTEGER, onDelete : 'CASCADE'})
-    declare stock_status_ud : number;
+    declare stock_status_id : number;
     
 
     @BelongsTo(()=> Product, {foreignKey: 'product_id', as: 'product'}) product : Product;
-    @BelongsTo(() => StockStatus, {foreignKey: 'stock_status_ud', as: 'stock_status'}) stock_status : StockStatus;
+    @BelongsTo(() => StockStatus, {foreignKey: 'stock_status_id', as: 'stock_status'}) stock_status : StockStatus;
 
 }
 

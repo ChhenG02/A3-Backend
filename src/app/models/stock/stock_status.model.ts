@@ -1,5 +1,6 @@
 import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import Stock from "./stock.model";
+import Product from "../product/product.model";
 
 
 @Table({
@@ -16,8 +17,9 @@ class StockStatus extends Model<StockStatus> {
     @Column({allowNull : true, type: DataType.DATE, defaultValue: new Date()}) declare created_at : Date;
     @Column({allowNull : true, type: DataType.DATE}) declare updated_at : Date;
 
-    @HasMany(() => Stock) stock : Stock[];
- 
+    // @HasMany(() => Stock) stock : Stock[];
+    @HasMany(() => Product ) product : Product[];
+  
 }
 
 export default StockStatus;
