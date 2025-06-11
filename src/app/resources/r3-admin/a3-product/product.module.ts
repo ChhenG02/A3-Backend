@@ -5,18 +5,14 @@ import { Module } from '@nestjs/common';
 
 // ===========================================================================>> Costom Library
 // Custom Components:
-import { FileService } from 'src/app/services/file.service';// for uploading file
+import { FileService } from 'src/app/services/file.service'; // for uploading file
 
-import { ProductController } from './controller';
-import { ProductService } from './service';
+
+import { ProductService } from './product.service';
+import { ProductController } from './product.controller';
 
 @Module({
-    controllers: [
-        ProductController
-    ],
-    providers: [
-        FileService,
-        ProductService
-    ]
+  controllers: [ProductController],
+  providers: [FileService, ProductService],
 })
 export class ProductModule {}

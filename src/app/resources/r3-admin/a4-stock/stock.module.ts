@@ -1,12 +1,12 @@
 // ===========================================================================>> Core Library
 import { Module } from '@nestjs/common';
-import { StockController } from './controller';
-import { StockService } from './service';
+import { StockController } from './stock.controller';
+import { StockService } from './stock.service';
 
 // ===========================================================================>> Costom Library
 
 @Module({
-    controllers: [StockController],
-    providers: [StockService]
+  controllers: [StockController],
+  providers: [StockService],
 })
-export class StockModule { }
+export class StockModule {}
