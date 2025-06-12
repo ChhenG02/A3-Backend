@@ -15,8 +15,8 @@ import User from '@app/models/user/user.model';
 import { FileService } from 'src/app/services/file.service';
 import Product from 'src/app/models/product/product.model';
 
-import { CreateProductDto, UpdateProductDto } from './dto';
-import { List } from './interface';
+import { CreateProductDto, UpdateProductDto } from './product.dto';
+import { List } from './product.interface';
 import { Fn, Col, Literal } from 'sequelize/types/utils';
 import ProductType from 'src/app/models/setup/type.model';
 export type Orders = Fn | Col | Literal | OrderItem[];
