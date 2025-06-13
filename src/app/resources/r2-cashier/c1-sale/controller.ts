@@ -23,18 +23,15 @@ export class SaleController {
         @Query('page') page?: number,
         @Query('key') key?: string,
         @Query('platform') platform?: string,
+        @Query('cashier') cashier?: number, // Add cashier parameter
         @Query('startDate') startDate?: string,
         @Query('endDate') endDate?: string
     ) {
-        if (!page_size) {
-            page_size = 10;
-        }
-        if (!page) {
-            page = 1;
-        }
-
-        return await this._service.getData(auth.id, page_size, page, key, platform, startDate, endDate);
+        if (!page_size) page_size = 10;
+        if (!page) page = 1;
+        return await this._service.getData(auth.id, page_size, page, key, platform, cashier, startDate, endDate);
     }
+    
     @Get(':id/view')
     async view(@Param('id') id: number
         
