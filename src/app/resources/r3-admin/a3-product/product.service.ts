@@ -1,12 +1,13 @@
 // ===========================================================================>> Core Library
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
 // ============================================================================>> Third Party Library
-import { col, literal, Op, OrderItem } from 'sequelize';
+import { col, literal, Op, OrderItem, where } from 'sequelize';
 
 // ===========================================================================>> Costom Library
 import OrderDetails from '@app/models/order/detail.model';
@@ -19,6 +20,8 @@ import { CreateProductDto, UpdateProductDto } from './product.dto';
 import { List } from './product.interface';
 import { Fn, Col, Literal } from 'sequelize/types/utils';
 import ProductType from 'src/app/models/setup/type.model';
+import Promotion from '@app/models/setup/promotion.model';
+import { ApiResponseDto } from '@app/core/dto/response.dto';
 export type Orders = Fn | Col | Literal | OrderItem[];
 
 @Injectable()
@@ -60,8 +63,9 @@ export class ProductService {
     endDate?: string;
     sort_by?: string;
     order?: string;
-  }): Promise<List | { status: string; message: string }> {
+  }): Promise<{ status: string; data: { products: Product[]}; pagination: any } | { status: string; message: string }> {
     try {
+
       // Ensure safe pagination values
       const page = Math.max(params?.page || 1, 1);
       const limit = Math.max(params?.limit || 10, 1);
@@ -132,12 +136,13 @@ export class ProductService {
       const offset = (safePage - 1) * limit;
 
       // Fetch rows
-      const { rows } = await Product.findAndCountAll({
+      const { rows : products } = await Product.findAndCountAll({
         attributes: [
           'id',
           'code',
           'name',
           'image',
+          'discount',
           'unit_price',
           'created_at',
           [
@@ -168,7 +173,9 @@ export class ProductService {
 
       return {
         status: 'success',
-        data: rows,
+        data: {
+          products,
+        },
         pagination: {
           page: safePage,
           limit,
@@ -405,4 +412,84 @@ export class ProductService {
       );
     }
   }
+
+  async getPromotion(): Promise<any>{
+    const current_date = new Date()
+    try{
+      const promotion = await Promotion.findAll({
+        where: {
+          start_date: { [Op.lte]: current_date },
+          end_date: { [Op.gte]: current_date },
+        },
+        attributes: ['id', 'discount_value']
+      });
+      return ApiResponseDto.success(
+        promotion,
+        'promotion fetchs successfully',
+        200
+
+      )
+    }catch(error){
+      return ApiResponseDto.error(
+        error.message || 'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+  }
+
+    async applyPromotion(
+      promotion_id: number,
+      product_ids: number[]
+    ): Promise<any> {
+      try {
+        if (!promotion_id || !product_ids || product_ids.length === 0) {
+          throw new NotFoundException('Promotion or products not found');
+        }
+        const promotion = await Promotion.findByPk(promotion_id);
+        if (!promotion) {
+          return {
+            statusCode: 404,
+            status: 'error',
+            message: 'Promotion not found',
+          };
+        }
+
+        const products = await Product.findAll({
+          where: { id: { [Op.in]: product_ids } },
+        });
+
+        const updateCount = await Promise.all(
+          products.map(async (p) => {
+            const unit_price = p.unit_price ?? 0;
+            const discountAmount = unit_price * (promotion.discount_value / 100);
+            const final_price = unit_price - discountAmount;
+            await p.update({ discount: final_price });
+            return p.id;
+          })
+        );
+
+        const response = products.map((p) => ({
+            id: p.id,
+            name: p.name,
+            unit_price: p.unit_price,
+            discount: p.discount,
+            promotion_id: promotion.id,
+            discount_value: promotion.discount_value + `%`,
+            appliedTo: updateCount.length,
+        }))
+        return {
+          statusCode: 200,
+          status: 'success',
+          product: response
+        };
+      } catch (error) {
+        console.error('Error in applyPromotion:', error);
+        return {
+          statusCode: 500,
+          status: 'error',
+          message: 'Failed to apply promotion',
+        };
+      }
+    }
+
 }

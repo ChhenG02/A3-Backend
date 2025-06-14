@@ -57,7 +57,7 @@ class Product extends Model<Product> {
   @Column({ allowNull: true, type: DataType.DOUBLE }) 
   declare unit_price?: number;
   
-  @Column({ allowNull: false, type: DataType.DECIMAL(10, 2), defaultValue: 0 }) 
+  @Column({ allowNull: true, type: DataType.DECIMAL(10, 2), defaultValue: 0 }) 
   declare discount: number;
 
   created_at: Date;
