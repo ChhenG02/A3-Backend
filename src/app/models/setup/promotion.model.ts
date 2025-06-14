@@ -30,8 +30,7 @@ class Promotion extends Model<Promotion> {
   @Column({ onDelete: 'CASCADE', allowNull: true, type: DataType.INTEGER })
   declare updater_id?: number;
 
-  @HasMany(() => Product)
-  products: Product[];
+  @HasMany(() => Product) products: Product[];
 
   @BelongsTo(() => User, { foreignKey: 'creator_id', as: 'creator'})
   creator: User;
