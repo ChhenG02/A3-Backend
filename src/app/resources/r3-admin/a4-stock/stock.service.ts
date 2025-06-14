@@ -93,6 +93,9 @@ export class StockService {
         case 'qty':
           sort.push([col('qty'), sortOrderProcessed]);
           break;
+        case 'stock_status_id':
+          sort.push([col('stock_status_id'), sortOrderProcessed]);
+          break;
         default:
           sort.push([sortFieldProcessed, sortOrderProcessed]);
           break;
