@@ -150,7 +150,7 @@ const productSeederData = {
       code: 'N001',
       type_id: 1,
       name: 'Mario Kart',
-      unit_price: 59.99,
+      unit_price: 0.01,
       purchase_price: 35.00,
       qty: 5, 
       discount: 0,
