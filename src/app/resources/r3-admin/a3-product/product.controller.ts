@@ -10,7 +10,7 @@ import {
   Put,
   Query,
   UsePipes,
-  Res
+  Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -19,10 +19,9 @@ import UserDecorator from '@app/core/decorators/user.decorator';
 
 import User from '@app/models/user/user.model';
 import Product from 'src/app/models/product/product.model';
-import { CreateProductDto, UpdateProductDto } from './product.dto';
+import { ApplyPromotionDto, CreateProductDto, UpdateProductDto } from './product.dto';
 import { ProductService } from './product.service';
 import { ProductTypeExistsPipe } from '@app/core/pipes/product.pipe';
-import Promotion from '@app/models/setup/promotion.model';
 @Controller()
 export class ProductController {
   constructor(private _service: ProductService) {}
@@ -71,12 +70,9 @@ export class ProductController {
   }
 
   @Post('promotion')
-  async applyPromotion(
-    @Body() body : {promotionId : number, productIds : number[]}
-  ): Promise<any>{
+  async applyPromotion(@Body() body: ApplyPromotionDto): Promise<any> {
     return this._service.applyPromotion(body.promotionId, body.productIds);
   }
-
   @Get('/:id')
   async view(@Param('id', ParseIntPipe) id: number) {
     return await this._service.view(id);
@@ -104,5 +100,4 @@ export class ProductController {
   async delete(@Param('id') id: number): Promise<{ message: string }> {
     return await this._service.delete(id);
   }
-
 }
