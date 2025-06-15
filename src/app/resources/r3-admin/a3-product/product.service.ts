@@ -63,9 +63,11 @@ export class ProductService {
     endDate?: string;
     sort_by?: string;
     order?: string;
-  }): Promise<{ status: string; data: { products: Product[]}; pagination: any } | { status: string; message: string }> {
+  }): Promise<
+    | { status: string; data: { products: Product[] }; pagination: any }
+    | { status: string; message: string }
+  > {
     try {
-
       // Ensure safe pagination values
       const page = Math.max(params?.page || 1, 1);
       const limit = Math.max(params?.limit || 10, 1);
@@ -136,7 +138,7 @@ export class ProductService {
       const offset = (safePage - 1) * limit;
 
       // Fetch rows
-      const { rows : products } = await Product.findAndCountAll({
+      const { rows: products } = await Product.findAndCountAll({
         attributes: [
           'id',
           'code',
@@ -145,12 +147,13 @@ export class ProductService {
           'discount',
           'unit_price',
           'created_at',
+          'promotion_id', // Add this line
           [
             literal(`(
-                                SELECT SUM(qty) 
-                                FROM order_details AS od 
-                                WHERE od.product_id = "Product"."id"
-                            )`),
+                        SELECT SUM(qty) 
+                        FROM order_details AS od 
+                        WHERE od.product_id = "Product"."id"
+                    )`),
             'total_sale',
           ],
         ],
@@ -413,83 +416,110 @@ export class ProductService {
     }
   }
 
-  async getPromotion(): Promise<any>{
-    const current_date = new Date()
-    try{
+  async getPromotion(): Promise<any> {
+    const current_date = new Date();
+    try {
       const promotion = await Promotion.findAll({
         where: {
           start_date: { [Op.lte]: current_date },
           end_date: { [Op.gte]: current_date },
         },
-        attributes: ['id', 'discount_value']
+        attributes: ['id', 'discount_value'],
       });
       return ApiResponseDto.success(
         promotion,
         'promotion fetchs successfully',
-        200
-
-      )
-    }catch(error){
+        200,
+      );
+    } catch (error) {
       return ApiResponseDto.error(
         error.message || 'Internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      )
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-    async applyPromotion(
-      promotion_id: number,
-      product_ids: number[]
-    ): Promise<any> {
-      try {
-        if (!promotion_id || !product_ids || product_ids.length === 0) {
-          throw new NotFoundException('Promotion or products not found');
-        }
-        const promotion = await Promotion.findByPk(promotion_id);
-        if (!promotion) {
-          return {
-            statusCode: 404,
-            status: 'error',
-            message: 'Promotion not found',
-          };
-        }
+  async applyPromotion(
+    promotion_id: number | null,
+    product_ids: number[],
+  ): Promise<any> {
+    try {
+      if (!product_ids || product_ids.length === 0) {
+        throw new BadRequestException('No product IDs provided');
+      }
 
-        const products = await Product.findAll({
-          where: { id: { [Op.in]: product_ids } },
-        });
-
-        const updateCount = await Promise.all(
-          products.map(async (p) => {
-            const unit_price = p.unit_price ?? 0;
-            const discountAmount = unit_price * (promotion.discount_value / 100);
-            const final_price = unit_price - discountAmount;
-            await p.update({ discount: final_price });
-            return p.id;
-          })
+      if (promotion_id === null) {
+        // Remove promotion from products
+        const [updateCount] = await Product.update(
+          {
+            promotion_id: null,
+            discount: 0,
+          },
+          {
+            where: { id: { [Op.in]: product_ids } },
+          },
         );
 
-        const response = products.map((p) => ({
+        // Fetch updated products
+        const updatedProducts = await Product.findAll({
+          where: { id: { [Op.in]: product_ids } },
+          include: [Promotion],
+        });
+
+        return {
+          status: 'success',
+          message: `Promotion removed from ${updateCount} products`,
+          data: updatedProducts.map((p) => ({
             id: p.id,
             name: p.name,
-            unit_price: p.unit_price,
-            discount: p.discount,
-            promotion_id: promotion.id,
-            discount_value: promotion.discount_value + `%`,
-            appliedTo: updateCount.length,
-        }))
-        return {
-          statusCode: 200,
-          status: 'success',
-          product: response
-        };
-      } catch (error) {
-        console.error('Error in applyPromotion:', error);
-        return {
-          statusCode: 500,
-          status: 'error',
-          message: 'Failed to apply promotion',
+            original_price: p.unit_price,
+            discount_percentage: p.discount || 0,
+            final_price: p.unit_price,
+            promotion: null,
+          })),
         };
       }
-    }
 
+      // Apply promotion
+      const promotion = await Promotion.findByPk(promotion_id);
+      if (!promotion) {
+        throw new NotFoundException('Promotion not found');
+      }
+
+      // Update products with promotion_id and discount percentage
+      const [updateCount] = await Product.update(
+        {
+          promotion_id: promotion.id,
+          discount: promotion.discount_value,
+        },
+        {
+          where: { id: { [Op.in]: product_ids } },
+        },
+      );
+
+      // Return updated products with their new prices
+      const updatedProducts = await Product.findAll({
+        where: { id: { [Op.in]: product_ids } },
+        include: [Promotion],
+      });
+
+      return {
+        status: 'success',
+        message: `Promotion applied to ${updateCount} products`,
+        data: updatedProducts.map((p) => ({
+          id: p.id,
+          name: p.name,
+          original_price: p.unit_price,
+          discount_percentage: p.discount,
+          final_price: p.unit_price * (1 - (p.discount || 0) / 100),
+          promotion: p.promotion,
+        })),
+      };
+    } catch (error) {
+      console.error('Error in applyPromotion:', error);
+      throw new BadRequestException(
+        error.message || 'Failed to apply or remove promotion',
+      );
+    }
+  }
 }
