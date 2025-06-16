@@ -1,6 +1,6 @@
 // ===========================================================================>> Core Library
 import { Routes } from '@nestjs/core';
-import { DashboardModule } from './a1-dashboard/module';
+import { DashboardModule } from './a1-dashboard/dashboard.module';
 import { SaleModule } from './a2-sale/module';
 import { ProductModule } from './a3-product/product.module';
 import { StockModule } from './a4-stock/stock.module';
