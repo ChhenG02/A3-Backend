@@ -30,7 +30,7 @@ export class OrderService {
             include: [
                 {
                     model: Product,
-                    attributes: ['id', 'type_id', 'name', 'image', 'unit_price', 'code'],
+                    attributes: ['id', 'type_id', 'name', 'image', 'unit_price', 'code', 'discount', 'promotion_id'],
                     include: [
                         {
                             model: ProductType,
