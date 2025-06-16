@@ -12,7 +12,7 @@ import { SaleModule } from './a2-sale/module';
 
 import { AdminMiddleware } from 'src/app/core/middlewares/admin.middleware';
 import { DeviceTrackerMiddleware } from 'src/app/core/middlewares/device-tracker.middleware';
-import { DashboardModule } from './a1-dashboard/module';
+import { DashboardModule } from './a1-dashboard/dashboard.module';
 import { ProductModule } from './a3-product/product.module';
 import { UserModule } from './a5-user/module';
 import { StockModule } from './a4-stock/stock.module';
