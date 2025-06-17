@@ -205,51 +205,74 @@ export class DashboardService {
     }
   }
 
-  async getStockStatus(): Promise<any> {
-    try {
-      // Fetch all products with their stock status
-      const products = await Product.findAll({
-        include: [
-          {
-            model: StockStatus,
-            attributes: ['id', 'name', 'min_items', 'color'],
-          },
-        ],
-      });
+async getStockStatus(): Promise<any> {
+  try {
+    // Step 1: Get all stock statuses from DB
+    const stockStatuses = await StockStatus.findAll({
+      attributes: ['id', 'name', 'min_items', 'max_items', 'color'],
+    });
 
-      // Categorize products
-      const outOfStock = products.filter((product) => product.qty === 0);
-      const lowStock = products.filter(
-        (product) =>
-          product.qty > 0 && product.qty <= product.stock_status?.min_items,
-      );
-
-      // Prepare response
-      const result = {
-        outOfStock: {
-          count: outOfStock.length,
-          products: outOfStock.map((product) => ({
-            name: product.name,
-            qty: product.qty,
-            status: product.stock_status?.name,
-          })),
+    // Step 2: Get all products with their associated stock status
+    const products = await Product.findAll({
+      include: [
+        {
+          model: StockStatus,
+          attributes: ['id', 'name', 'min_items', 'max_items', 'color'],
         },
-        lowStock: {
-          count: lowStock.length,
-          products: lowStock.map((product) => ({
-            name: product.name,
-            qty: product.qty,
-            status: product.stock_status?.name,
-            minItems: product.stock_status?.min_items,
-          })),
-        },
-      };
+      ],
+    });
 
-      return { data: result, message: 'Stock status retrieved successfully' };
-    } catch (err) {
-      throw new BadRequestException(err.message);
+    // Step 3: Find matching statuses
+    const lowStockStatus = stockStatuses.find((s) => s.name === 'Low Stock');
+    const outOfStockStatus = stockStatuses.find((s) => s.name === 'Out of Stock');
+
+    if (!lowStockStatus || !outOfStockStatus) {
+      throw new Error('Required stock statuses not found in database');
     }
+
+    // Step 4: Filter products based on DB status range
+    const outOfStock = products.filter(
+      (product) =>
+        product.qty >= outOfStockStatus.min_items &&
+        product.qty <= outOfStockStatus.max_items
+    );
+
+    const lowStock = products.filter(
+      (product) =>
+        product.qty >= lowStockStatus.min_items &&
+        product.qty <= lowStockStatus.max_items
+    );
+
+    // Step 5: Return response
+    const result = {
+      outOfStock: {
+        count: outOfStock.length,
+        products: outOfStock.map((product) => ({
+          name: product.name,
+          qty: product.qty,
+          status: product.stock_status?.name,
+        })),
+      },
+      lowStock: {
+        count: lowStock.length,
+        products: lowStock.map((product) => ({
+          name: product.name,
+          qty: product.qty,
+          status: product.stock_status?.name,
+          minItems: product.stock_status?.min_items,
+        })),
+      },
+    };
+
+    return {
+      data: result,
+      message: 'Stock status retrieved successfully',
+    };
+  } catch (err) {
+    throw new BadRequestException(err.message);
   }
+}
+
 
   async findCashierAndTotalSale(
     filters: {

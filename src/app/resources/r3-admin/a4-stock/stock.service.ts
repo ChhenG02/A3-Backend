@@ -208,15 +208,19 @@ export class StockService {
 
   // Helper method to determine stock_status_id based on qty
   private async getStockStatusId(qty: number): Promise<number> {
-    const statuses = await StockStatus.findAll({
-      attributes: ['id', 'min_items', 'max_items'],
-    });
-
-    const status = statuses.find(
-      (s) => qty >= s.min_items && qty <= s.max_items
-    );
-    return status ? status.id : null; // Return null if no matching status
+  const statuses = await StockStatus.findAll({
+    attributes: ['id', 'min_items', 'max_items'],
+    order: [['min_items', 'ASC']] // Important for correct threshold checking
+  });
+  for (const status of statuses) {
+    if (qty >= status.min_items && qty <= status.max_items) {
+      return status.id;
+    }
   }
+
+  // If no status matches (shouldn't happen with proper configuration)
+  return statuses[0]?.id || null;
+}
 
   async create(
     body: CreateStockDto,

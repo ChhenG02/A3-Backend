@@ -120,7 +120,7 @@ const productSeederData = {
       color: 'red', 
       avatar: 'static/pos/stock/out-of-stock.png',
       min_items: 0,
-      max_items: 1 
+      max_items: 0 
     },
   ],
   
