@@ -77,4 +77,9 @@ export class DashboardController {
       sixMonthAgo,
     });
   }
+
+  @Get('/top-products')
+  async getTopProducts() {
+    return await this._service.findTopProducts();
+  }
 }
