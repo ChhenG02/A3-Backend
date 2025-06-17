@@ -14,6 +14,8 @@ import Role from '@app/models/user/role.model';
 import UserRoles from '@app/models/user/user_roles.model';
 import User from '@app/models/user/user.model';
 import StockStatus from '@app/models/stock/stock_status.model';
+import OrderDetails from '@app/models/order/detail.model';
+import { TopProduct } from './dashboard.interface';
 
 @Injectable()
 export class DashboardService {
@@ -406,6 +408,66 @@ async getStockStatus(): Promise<any> {
     }
 
     return { currentPeriodFilter, previousPeriodFilter };
+  }
+
+  async findTopProducts() {
+    try {
+      // Query to get top-selling products
+      const topProducts = await Product.findAll({
+        attributes: [
+          'id',
+          'name',
+          'image',
+          [
+            fn('SUM', col('pod.qty')),
+            'totalSales', 
+          ],
+          [
+            Sequelize.literal(
+              `COALESCE(SUM("pod"."unit_price" * "pod"."qty"), 0)`
+            ),
+            'totalAmountSales', 
+          ],
+        ],
+        include: [
+          {
+            model: OrderDetails,
+            as: 'pod',
+            attributes: [],
+            required: false, 
+            include: [
+              {
+                model: Order,
+                attributes: [],
+              },
+            ],
+          },
+        ],
+        group: ['Product.id', 'Product.name', 'Product.image'],
+        order: [
+          [
+            Sequelize.literal(`COALESCE(SUM("pod"."unit_price" * "pod"."qty"), 0)`),
+            'DESC',
+          ],
+        ], 
+        raw: true, 
+      }) as unknown as TopProduct[]; 
+
+      const result = {
+        topProducts: topProducts.map((product) => ({
+          id: product.id,
+          name: product.name,
+          image: product.image,
+          totalSales: parseInt(product.totalSales, 10) || 0,
+          totalAmountSales: parseFloat(product.totalAmountSales) || 0,
+        })),
+        message: 'Top products retrieved successfully',
+      };
+
+      return result;
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
   }
 
   async findProductTypeWithProductHaveUsed(filters: {
