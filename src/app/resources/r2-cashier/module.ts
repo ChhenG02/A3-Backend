@@ -5,8 +5,9 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 
 import { DeviceTrackerMiddleware } from 'src/app/core/middlewares/device-tracker.middleware';
 import { UserMiddleware } from 'src/app/core/middlewares/user.middleware';
-import { SaleModule } from './c1-sale/module';
-import { OrderModule } from './c2-order/module';
+import { SaleModule } from './c1-sale/sale.module';
+import { OrderModule } from './c2-order/order.module';
+
 
 
 @Module({
