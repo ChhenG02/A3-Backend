@@ -16,8 +16,9 @@ import Order from 'src/app/models/order/order.model';
 import Product from 'src/app/models/product/product.model';
 import ProductType from 'src/app/models/setup/type.model';
 import Promotion from 'src/app/models/setup/promotion.model'; // Import Promotion model
-import { CreateOrderDto } from './dto';
+
 import Payment from '@app/models/payment/payment.model';
+import { CreateOrderDto } from './order.dto';
 
 // ======================================= >> Code Starts Here << ========================== //
 @Injectable()

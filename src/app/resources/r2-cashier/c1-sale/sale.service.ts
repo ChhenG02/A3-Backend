@@ -7,13 +7,15 @@ import {
 
 // ===========================================================================>> Third party Library
 import { Op, Sequelize } from 'sequelize';
-// ===========================================================================>> Costom Library
+
+// ===========================================================================>> Custom Library
 import OrderDetails from '@app/models/order/detail.model';
 import Product from '@app/models/product/product.model';
 import ProductType from '@app/models/setup/type.model';
 import User from '@app/models/user/user.model';
 import Order from 'src/app/models/order/order.model';
-import { List } from './interface';
+import { List } from './sale.interface';
+import Payment from '@app/models/payment/payment.model';
 
 @Injectable()
 export class SaleService {
@@ -64,6 +66,7 @@ export class SaleService {
         attributes: [
           'id',
           'receipt_number',
+          'sub_total_price',
           'total_price',
           'platform',
           'ordered_at',
@@ -75,12 +78,13 @@ export class SaleService {
             include: [
               {
                 model: Product,
-                attributes: ['id', 'name', 'code', 'image'],
+                attributes: ['id', 'name', 'code', 'image', 'discount', 'promotion_id'],
                 include: [{ model: ProductType, attributes: ['name'] }],
               },
             ],
           },
           { model: User, attributes: ['id', 'avatar', 'name'] },
+          { model: Payment, attributes: ['payment_method'] }, // Include payment method
         ],
         where: where,
         order: [['ordered_at', 'DESC']],
@@ -105,6 +109,7 @@ export class SaleService {
     }
   }
 
+  // sale.service.ts, in the view method
   async view(id: number) {
     try {
       const data = await Order.findByPk(id, {
@@ -122,7 +127,14 @@ export class SaleService {
             include: [
               {
                 model: Product,
-                attributes: ['id', 'name', 'code', 'image'],
+                attributes: [
+                  'id',
+                  'name',
+                  'code',
+                  'image',
+                  'promotion_id',
+                  'discount',
+                ],
                 include: [
                   {
                     model: ProductType,
@@ -136,8 +148,13 @@ export class SaleService {
             model: User,
             attributes: ['id', 'avatar', 'name'],
           },
+          { model: Payment, attributes: ['payment_method'] }, // Include payment method
         ],
       });
+
+      if (!data) {
+        throw new NotFoundException('Sale record not found.');
+      }
 
       const dataFormat = {
         status: 'success',

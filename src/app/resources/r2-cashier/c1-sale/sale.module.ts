@@ -2,12 +2,12 @@
 import { Module } from '@nestjs/common';
 
 // ===========================================================================>> Costom Library
-import { SaleService } from './service';
-import { SaleController } from './controller';
+import { SaleService } from './sale.service';
+import { SaleController } from './sale.controller';
 
 @Module({
-    providers: [SaleService],
-    controllers: [SaleController],
-    imports: []
+  providers: [SaleService],
+  controllers: [SaleController],
+  imports: [],
 })
-export class SaleModule { }
+export class SaleModule {}
