@@ -65,6 +65,8 @@ export class UserService {
     // Calculate start and end dates for the filter
     const start = startDate ? toCambodiaDate(startDate) : null;
     const end = endDate ? toCambodiaDate(endDate, true) : null;
+
+    // Build the where clause
     const where = {
       [Op.and]: [
         key
@@ -80,7 +82,22 @@ export class UserService {
       ],
     };
 
-    // Fetch data with the necessary associations and calculated fields
+    // Build the include clause with role filtering if type_id is provided
+    const include = [
+      {
+        model: UserRoles,
+        attributes: ['id', 'role_id'],
+        ...(type_id ? { where: { role_id: type_id } } : {}),
+        include: [
+          {
+            model: Role,
+            attributes: ['id', 'name'],
+          },
+        ],
+      },
+    ];
+
+    // Fetch data with the necessary associations
     const data = await User.findAll({
       attributes: [
         'id',
@@ -93,55 +110,51 @@ export class UserService {
         'created_at',
         [
           literal(`(
-                        SELECT COUNT(o.id)
-                        FROM "order" AS o
-                        WHERE o.cashier_id = "User".id
-                    )`),
+            SELECT COUNT(o.id)
+            FROM "order" AS o
+            WHERE o.cashier_id = "User".id
+          )`),
           'totalOrders',
         ],
         [
           literal(`(
-                        SELECT COALESCE(SUM(o.total_price), 0)
-                        FROM "order" AS o
-                        WHERE o.cashier_id = "User".id
-                    )`),
+            SELECT COALESCE(SUM(o.total_price), 0)
+            FROM "order" AS o
+            WHERE o.cashier_id = "User".id
+          )`),
           'totalSales',
         ],
       ],
-      include: [
-        {
-          model: UserRoles,
-          attributes: ['id', 'role_id'],
-          //where: type_id ? { role_id: type_id } : null,
-          include: [
-            {
-              model: Role,
-              attributes: ['id', 'name'],
-            },
-          ],
-        },
-      ],
+      include,
       where,
       order: [['id', 'DESC']],
       limit: page_size,
       offset,
     });
 
-    // Calculate total count without `include` for pagination
-    const totalCount = await User.count({ where });
-    const totalPages = Math.ceil(totalCount / page_size);
+    // For count query, we need to ensure it works with the role filter
+    const countOptions: any = { where };
+    if (type_id) {
+      countOptions.include = [{
+        model: UserRoles,
+        where: { role_id: type_id },
+        attributes: [],
+        required: true
+      }];
+    }
 
-    const dataFormat: List = {
+    const totalCount = Number(await User.count(countOptions));
+    const totalPages = Math.ceil(totalCount / Number(page_size));
+
+    return {
       data,
       pagination: {
-        page: page,
+        page,
         limit: page_size,
         totalPage: totalPages,
         total: totalCount,
       },
     };
-
-    return dataFormat;
   }
 
   async view(userId: number) {
