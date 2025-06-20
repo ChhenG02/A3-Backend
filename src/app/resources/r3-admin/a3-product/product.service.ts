@@ -216,7 +216,7 @@ export class ProductService {
           include: [
             {
               model: Product,
-              attributes: ['id', 'name', 'code', 'image'],
+              attributes: ['id', 'name', 'code', 'image', 'promotion_id'],
               include: [{ model: ProductType, attributes: ['name'] }],
             },
           ],
