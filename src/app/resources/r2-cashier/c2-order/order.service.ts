@@ -67,6 +67,8 @@ async getProducts(): Promise<{
   return { data: dataFormat };
 }
 
+  
+
   async makeOrder(
   cashierId: number,
   body: CreateOrderDto,
