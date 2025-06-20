@@ -78,6 +78,7 @@ class Product extends Model<Product> {
   // ===========================================================================================>> One to Many
   @HasMany(() => OrderDetails) 
   pod: OrderDetails[];
+    type: any;
 }
 
 export default Product;

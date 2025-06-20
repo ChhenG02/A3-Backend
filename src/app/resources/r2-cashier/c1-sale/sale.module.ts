@@ -9,5 +9,6 @@ import { SaleController } from './sale.controller';
   providers: [SaleService],
   controllers: [SaleController],
   imports: [],
+  exports: [SaleService],
 })
 export class SaleModule {}
