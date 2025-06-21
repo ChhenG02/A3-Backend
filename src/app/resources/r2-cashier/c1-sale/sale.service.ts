@@ -16,15 +16,19 @@ import User from '@app/models/user/user.model';
 import Order from 'src/app/models/order/order.model';
 import { List } from './sale.interface';
 import Payment from '@app/models/payment/payment.model';
+import { ApiResponseDto } from '@app/core/dto/response.dto';
 
 @Injectable()
 export class SaleService {
-  async getUser() {
+  async getUser(): Promise<any> {
     const data = await User.findAll({
       attributes: ['id', 'name'],
     });
-
-    return { data: data };
+    return ApiResponseDto.success(
+      data,
+      'User list retrieved successfully.',
+      200
+    )
   }
 
   async getData(

@@ -7,18 +7,24 @@ import {
   HttpStatus,
   Param,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 // ===========================================================================>> Custom Library
 import UserDecorator from '@app/core/decorators/user.decorator';
 import User from '@app/models/user/user.model';
 import { SaleService } from './sale.service';
+import { RoleGuard } from '@app/core/guards/role.guard';
+import { RoleEnum } from '@app/enums/role.enum';
+import { RolesDecorator } from '@app/core/decorators/roles.decorator';
 
 @Controller()
 export class SaleController {
   constructor(private readonly _service: SaleService) {}
 
   @Get('/setup')
+  @UseGuards(RoleGuard)
+  @RolesDecorator(RoleEnum.CASHIER, RoleEnum.ADMIN)
   async getUser() {
     return await this._service.getUser();
   }
