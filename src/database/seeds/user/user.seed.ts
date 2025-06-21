@@ -61,7 +61,7 @@ const data = {
     {
       name: 'Panhariddh',
       phone: '099785698',
-      email: 'panhariddh@gmail.com',
+      email: 'odompanharith@gmail.com',
       password: '123456',
       avatar: 'static/pos/user/avatar.png',
       creator_id: 1,
