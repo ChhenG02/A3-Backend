@@ -6,7 +6,6 @@ import { col, fn, Op, Sequelize, where } from 'sequelize';
 
 // ===========================================================================>> Custom Library
 import { RoleEnum } from '@app/enums/role.enum';
-import { JsReportService } from '@app/services/js-report.service';
 import Order from '@app/models/order/order.model';
 import Product from '@app/models/product/product.model';
 import ProductType from '@app/models/setup/type.model';
@@ -19,7 +18,6 @@ import { TopProduct } from './dashboard.interface';
 
 @Injectable()
 export class DashboardService {
-  constructor(private jsReportService: JsReportService) {}
 
   async findStaticData(
     filters: {

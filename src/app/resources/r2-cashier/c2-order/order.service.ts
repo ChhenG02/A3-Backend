@@ -248,15 +248,14 @@ async getProducts(): Promise<{
 
     // Prepare Telegram message
     const currentDateTime = await this.getCurrentDateTimeInCambodia();
-    let htmlMessage = `<b>ការបញ្ជាទិញទទួលបានជោគជ័យ!</b>\n`;
-    htmlMessage += `- លេខវិកយប័ត្រ \u2003 ៖ ${data.receipt_number}\n`;
-    htmlMessage += `- តម្លៃសរុបមុនបញ្ចុះតម្លៃ \u2003 ៖ ${this.formatPrice(data.sub_total_price)} ៛\n`;
-    htmlMessage += `- បញ្ចុះតម្លៃ \u2003 ៖ ${this.formatPrice(data.discount_price)} ៛\n`;
-    htmlMessage += `- តម្លៃសរុប \u2003 ៖ ${this.formatPrice(data.total_price)} ៛\n`;
-    htmlMessage += `- វិធីបង់ប្រាក់ \u2003 ៖ ${data.payment?.payment_method || ''}\n`;
-    htmlMessage += `- អ្នកគិតលុយ \u2003 ៖ ${data.cashier?.name || ''}\n`;
-    htmlMessage += `- តាមរយៈ \u2003 ៖ ${body.platform || ''}\n`;
-    htmlMessage += `- កាលបរិច្ឆេទ \u2003 ៖ ${currentDateTime}\n`;
+    let htmlMessage = `<b>Order Successfully Placed!</b>\n`;
+    htmlMessage += `- Invoice No:\u2003 ៖ ${data.receipt_number}\n`;
+    htmlMessage += `- Subtotal \u2003 ៖ ${this.formatPrice(data.sub_total_price)} $\n`;
+    htmlMessage += `- Discount \u2003 ៖ ${this.formatPrice(data.discount_price)} $\n`;
+    htmlMessage += `- Total \u2003 ៖ ${this.formatPrice(data.total_price)} $\n`;
+    htmlMessage += `- Payment \u2003 ៖ ${data.payment?.payment_method || ''}\n`;
+    htmlMessage += `- Cashier \u2003 ៖ ${data.cashier?.name || ''}\n`;
+    htmlMessage += `- Date \u2003 ៖ ${currentDateTime}\n`;
 
     await this.telegramService.sendHTMLMessage(htmlMessage);
 
