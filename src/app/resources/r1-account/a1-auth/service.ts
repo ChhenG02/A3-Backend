@@ -282,7 +282,7 @@ export class AuthService {
       // Send OTP via email or SMS
       await this.emailService.sendHTMLMessage(
         user.email,
-        'Your OTP Code',
+        'GameStoreKH OTP Code',
         `<p>Your OTP code is: <strong>${otp}</strong>. It will expire in 1 minute.</p>`,
       );
 
