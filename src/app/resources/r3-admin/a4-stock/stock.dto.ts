@@ -15,7 +15,6 @@ export class CreateStockDto {
   type_id: number;
 
   @IsNumber()
-  @IsPositive()
   qty: number;
 
   @IsNumber()
